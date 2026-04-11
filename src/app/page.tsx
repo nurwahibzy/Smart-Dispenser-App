@@ -1,4 +1,4 @@
-import NavbarPublic from "@/components/layouts/navbar/navbarPublic";
+import NavbarPublic from "@/components/layouts/navbar/NavbarPublic";
 import Footer from "@/components/layouts/footer";
 import HeroSection from "@/components/sections/hero/HeroSection";
 
