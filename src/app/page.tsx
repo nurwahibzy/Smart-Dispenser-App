@@ -1,6 +1,9 @@
 import NavbarPublic from "@/components/layouts/navbar/navbar-public";
 import Footer from "@/components/layouts/footer";
 import HeroSection from "@/components/sections/homepage/hero-section";
+import NavbarPublic from "@/components/layouts/navbar/navbarPublic";
+import Footer from "@/components/layouts/footer";
+import HeroSection from "@/components/sections/hero/HeroSection";
 
 export default function HomePage() {
   return (
