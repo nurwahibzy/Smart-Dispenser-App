@@ -56,7 +56,7 @@ export function WaterGauge({ level, liters, capacity }: WaterGaugeProps) {
       </div>
 
       <div className="relative flex items-center justify-center my-2">
-        <svg width="220" height="350" viewBox="0 0 220 200">
+        <svg width="220" height="400" viewBox="0 0 220 200">
           <defs>
             <linearGradient
               id="gaugeGradient"
