@@ -3,14 +3,10 @@ import type { Transaction } from "@/types/transaction";
 export const calculateDailyUsage = (transactions: Transaction[]) => {
   const now = new Date();
 
-  // 🔥 DEBUG (boleh dihapus nanti)
-  console.log("NOW:", now);
-
   const todayTransactions = transactions.filter((trx) => {
-    const trxDate = trx.timestamp.toDate();
+    if (!trx.timestamp) return false; // handle null
 
-    // 🔥 DEBUG
-    console.log("TRX DATE:", trxDate);
+    const trxDate = trx.timestamp;
 
     return (
       trxDate.getDate() === now.getDate() &&
@@ -19,8 +15,6 @@ export const calculateDailyUsage = (transactions: Transaction[]) => {
       trx.status === true
     );
   });
-
-  console.log("FILTERED:", todayTransactions);
 
   const totalDispenses = todayTransactions.length;
 

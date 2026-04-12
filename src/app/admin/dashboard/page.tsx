@@ -11,8 +11,7 @@ import { calculateDailyUsage } from "@/lib/utils/transaction";
 import { sendToggleValveCommand } from "@/features/device/infrastructure/device.firebase";
 
 // Simulasi valve
-import { set, ref } from "firebase/database";
-import { rtdb } from "@/lib/firebase/client";
+import { toggleValveSimulation } from "@/features/device/application/valve.simulation";
 
 export default function DashboardPage() {
   const { data, loading } = useDeviceData();
@@ -55,24 +54,19 @@ export default function DashboardPage() {
           {/* Code asli */}
           {/* <ValveControl
             isOpen={status?.valveOpen || false}
-            onToggle={() => {
-              console.log("CLICKED");
-              sendToggleValveCommand();
-            }}
+            onToggle={sendToggleValveCommand}
+            className="flex-1"
           /> */}
 
           {/* Code Simulasi  */}
           <ValveControl
             isOpen={status?.valveOpen || false}
-            onToggle={async () => {
-              await sendToggleValveCommand();
-
-              // SIMULASI DEVICE RESPONSE
-              await set(
-                ref(rtdb, "devices/dispenser-1/status/valveOpen"),
-                !status?.valveOpen,
-              );
-            }}
+            onToggle={() =>
+              toggleValveSimulation({
+                currentState: status?.valveOpen || false,
+                tds: sensors?.tds || 0,
+              })
+            }
             className="flex-1"
           />
         </div>

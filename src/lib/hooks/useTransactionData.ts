@@ -1,7 +1,5 @@
-"use client";
-
 import { useEffect, useState } from "react";
-import { getDispenseHistory } from "@/features/transaction/infrastructure/transaction.firebase";
+import { subscribeDispenseHistory } from "@/features/transaction/infrastructure/transaction.firebase";
 import type { Transaction } from "@/types/transaction";
 
 export const useTransactionData = () => {
@@ -9,13 +7,12 @@ export const useTransactionData = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetch = async () => {
-      const res = await getDispenseHistory();
-      setData(res);
+    const unsubscribe = subscribeDispenseHistory((transactions) => {
+      setData(transactions);
       setLoading(false);
-    };
+    });
 
-    fetch();
+    return () => unsubscribe();
   }, []);
 
   return { data, loading };

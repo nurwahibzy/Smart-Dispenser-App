@@ -1,5 +1,3 @@
-import { Timestamp } from "firebase/firestore";
-
 export type Transaction = {
   id: string;
   actualVolume: number;
@@ -7,5 +5,6 @@ export type Transaction = {
   deviceId: string;
   status: boolean;
   tds: number;
-  timestamp: Timestamp;
+  type: "auto" | "manual";
+  timestamp: Date | null;
 };
