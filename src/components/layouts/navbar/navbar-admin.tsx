@@ -1,7 +1,7 @@
 "use client";
 
 import type { NavbarAdminProps } from "@/types/navbar";
-import { Droplets, Bell, Settings, User } from "lucide-react";
+import { Droplets, Bell, User } from "lucide-react";
 
 export default function NavbarAdmin({
   online,

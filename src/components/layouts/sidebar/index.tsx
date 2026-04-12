@@ -41,7 +41,7 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`h-screen ${
+      className={`sticky top-0 h-screen ${
         isOpen ? "w-64" : "w-20"
       } bg-white border-r border-blue-100 shadow-sm flex flex-col justify-between p-4 transition-all duration-300`}
     >
