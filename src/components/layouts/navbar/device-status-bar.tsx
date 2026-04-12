@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Wifi, WifiOff, RefreshCw } from "lucide-react";
 
 type DeviceStatusBarProps = {
@@ -15,6 +15,18 @@ export default function DeviceStatusBar({
   onRefresh,
 }: DeviceStatusBarProps) {
   const [spinning, setSpinning] = useState(false);
+  const [time, setTime] = useState<string>("--:--:--");
+
+  // Fix hydration issue
+  useEffect(() => {
+    const formatted = lastUpdate.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+
+    setTime(formatted);
+  }, [lastUpdate]);
 
   const handleRefresh = () => {
     setSpinning(true);
@@ -45,14 +57,7 @@ export default function DeviceStatusBar({
       <span className="text-slate-200">|</span>
 
       {/* Last Update */}
-      <span className="text-slate-400 text-xs">
-        Updated{" "}
-        {lastUpdate.toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-        })}
-      </span>
+      <span className="text-slate-400 text-xs">Updated {time}</span>
 
       {/* Refresh Button */}
       <button

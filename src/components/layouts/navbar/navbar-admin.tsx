@@ -14,15 +14,15 @@ export default function NavbarAdmin({
   return (
     <header className="bg-white border-b border-blue-100 sticky top-0 z-30 shadow-sm">
       <div className="px-6 py-4 flex items-center justify-between">
-        {/* LEFT (samakan dengan sidebar) */}
+        {/* LOGO */}
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center">
             <Droplets size={18} className="text-white" />
           </div>
-          <div>
+          {/* <div>
             <h1 className="text-sm font-bold text-blue-600">Smart Dispenser</h1>
             <p className="text-xs text-gray-400">Admin Panel</p>
-          </div>
+          </div> */}
         </div>
 
         {/* RIGHT */}
@@ -45,11 +45,6 @@ export default function NavbarAdmin({
                 {notifications}
               </span>
             )}
-          </button>
-
-          {/* Settings */}
-          <button className="w-9 h-9 bg-gray-50 border border-blue-100 rounded-xl flex items-center justify-center text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition">
-            <Settings size={16} />
           </button>
 
           {/* 👤 PROFILE */}
