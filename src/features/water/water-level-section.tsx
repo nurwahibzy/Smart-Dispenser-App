@@ -2,11 +2,13 @@
 
 import { WaterGauge } from "./water-gauge";
 import { useWaterData } from "@/lib/hooks/useWaterData";
+import { calculateWaterLiters } from "@/lib/utils/water";
 
 export default function WaterLevelSection() {
   const { waterLevel, loading } = useWaterData();
 
-  const liters = +(20 * (waterLevel / 100)).toFixed(1);
+  const capacity = 20;
+  const liters = calculateWaterLiters(waterLevel, capacity);
 
   if (loading) {
     return (
@@ -16,5 +18,5 @@ export default function WaterLevelSection() {
     );
   }
 
-  return <WaterGauge level={waterLevel} liters={liters} capacity={20} />;
+  return <WaterGauge level={waterLevel} liters={liters} capacity={capacity} />;
 }
