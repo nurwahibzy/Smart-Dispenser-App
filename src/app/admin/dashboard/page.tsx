@@ -8,6 +8,7 @@ import DailyUsageCard from "@/components/cards/daily-usage-card";
 import ValveControl from "@/components/cards/valve-control-card";
 import VolumeControl from "@/components/cards/volume-controle-card";
 import { ConsumptionTrend } from "@/features/transaction/components/consumption-trends-chart";
+import { HistoryTable } from "@/features/transaction/components/history-table";
 
 import { groupTransactionsByDay } from "@/lib/utils/chart";
 import { useDeviceData } from "@/lib/hooks/useDeviceData";
@@ -176,6 +177,10 @@ export default function DashboardPage({
 
       <div className="w-full">
         {showChart && <ConsumptionTrend data={chartData} />}
+      </div>
+
+      <div className="w-full">
+        <HistoryTable />
       </div>
     </div>
   );
