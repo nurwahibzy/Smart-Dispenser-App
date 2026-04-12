@@ -1,10 +1,9 @@
 import type { Transaction } from "@/types/transaction";
-
 export const calculateDailyUsage = (transactions: Transaction[]) => {
   const now = new Date();
 
   const todayTransactions = transactions.filter((trx) => {
-    if (!trx.timestamp) return false; // handle null
+    if (!trx.timestamp) return false;
 
     const trxDate = trx.timestamp;
 
@@ -18,10 +17,10 @@ export const calculateDailyUsage = (transactions: Transaction[]) => {
 
   const totalDispenses = todayTransactions.length;
 
-  const totalVolumeMl = todayTransactions.reduce(
-    (sum, trx) => sum + (trx.actualVolume ?? 0),
-    0,
-  );
+  const totalVolumeMl = todayTransactions.reduce((sum, trx) => {
+    const volume = Number(trx.actualVolume);
+    return sum + (isNaN(volume) ? 0 : volume);
+  }, 0);
 
   return {
     totalDispenses,

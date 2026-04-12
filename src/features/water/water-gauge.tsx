@@ -42,7 +42,7 @@ export function WaterGauge({ level, liters, capacity }: WaterGaugeProps) {
   const waveHeight = 100 - animatedLevel;
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col items-center">
+    <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col h-full">
       <div className="flex items-center justify-between w-full mb-4">
         <div>
           <h2 className="text-slate-800">Water Level</h2>
@@ -55,8 +55,8 @@ export function WaterGauge({ level, liters, capacity }: WaterGaugeProps) {
         </span>
       </div>
 
-      <div className="relative flex items-center justify-center my-2">
-        <svg width="220" height="350" viewBox="0 0 220 200">
+      <div className="relative flex items-center justify-center my-2 flex-1">
+        <svg width="220" height="385" viewBox="0 0 220 200">
           <defs>
             <linearGradient
               id="gaugeGradient"
