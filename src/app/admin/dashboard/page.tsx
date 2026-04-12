@@ -2,7 +2,7 @@
 
 import { useRef, useState, useMemo, useEffect } from "react";
 
-import WaterLevelSection from "@/features/water/water-level-section";
+import WaterLevelSection from "@/features/water/components/water-level-section";
 import TdsCard from "@/components/cards/tds-card";
 import DailyUsageCard from "@/components/cards/daily-usage-card";
 import ValveControl from "@/components/cards/valve-control-card";
