@@ -4,8 +4,6 @@ import { useState } from "react";
 import Sidebar from "@/components/layouts/sidebar";
 import NavbarAdmin from "@/components/layouts/navbar/navbar-admin";
 import DeviceStatusBar from "@/components/layouts/navbar/device-status-bar";
-import Sidebar from "@/components/layouts/sidebar";
-import Navbar from "@/components/layouts/navbar/navbarAdmin";
 
 export default function AdminLayout({
   children,
@@ -33,7 +31,6 @@ export default function AdminLayout({
           setNotifications={setNotifications}
           DeviceStatusBar={DeviceStatusBar}
         />
-        <Navbar />
 
         <main className="flex-1 bg-gray-50 p-6">{children}</main>
       </div>

@@ -1,27 +1,30 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo, useEffect } from "react";
 
 import WaterLevelSection from "@/features/water/water-level-section";
 import TdsCard from "@/components/cards/tds-card";
 import DailyUsageCard from "@/components/cards/daily-usage-card";
 import ValveControl from "@/components/cards/valve-control-card";
 import VolumeControl from "@/components/cards/volume-controle-card";
+import { ConsumptionTrend } from "@/components/charts/consumption-trends-chart";
 
+import { groupTransactionsByDay } from "@/lib/utils/chart";
 import { useDeviceData } from "@/lib/hooks/useDeviceData";
 import { useTransactionData } from "@/lib/hooks/useTransactionData";
 import { calculateDailyUsage } from "@/lib/utils/transaction";
-import { sendToggleValveCommand } from "@/features/device/infrastructure/device.firebase";
 
-// Simulasi valve
 import { toggleValveSimulation } from "@/features/device/application/valve.simulation";
-
 import {
   startAutoDispense,
   stopAutoDispense,
 } from "@/features/device/application/dispense.controller";
 
-export default function DashboardPage() {
+export default function DashboardPage({
+  isSidebarOpen,
+}: {
+  isSidebarOpen?: boolean;
+}) {
   const { data, loading } = useDeviceData();
   const { data: transactions, loading: trxLoading } = useTransactionData();
 
@@ -36,6 +39,23 @@ export default function DashboardPage() {
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef(0);
+
+  // 🔥 MEMO DATA
+  const chartData = useMemo(() => {
+    return groupTransactionsByDay(transactions || []);
+  }, [transactions]);
+
+  // 🔥 FREEZE CHART
+  const [showChart, setShowChart] = useState(true);
+
+  useEffect(() => {
+    if (isSidebarOpen === undefined) return;
+
+    setShowChart(false);
+    const t = setTimeout(() => setShowChart(true), 250);
+
+    return () => clearTimeout(t);
+  }, [isSidebarOpen]);
 
   if (loading || trxLoading) {
     return (
@@ -108,27 +128,16 @@ export default function DashboardPage() {
 
   return (
     <div className="p-6 space-y-6">
-      {/* CARDS */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch">
-        {/* LEFT */}
         <div className="lg:col-span-1 flex">
           <div className="flex-1">
             <WaterLevelSection />
           </div>
         </div>
 
-        {/* MIDDLE */}
         <div className="flex flex-col gap-4 h-full">
           <TdsCard tds={sensors?.tds || 0} />
 
-          {/* Code asli */}
-          {/* <ValveControl
-            isOpen={status?.valveOpen || false}
-            onToggle={sendToggleValveCommand}
-            className="flex-1"
-          /> */}
-
-          {/* Code Simulasi  */}
           <ValveControl
             isOpen={status?.valveOpen || false}
             onToggle={() => {
@@ -146,7 +155,6 @@ export default function DashboardPage() {
           />
         </div>
 
-        {/* RIGHT */}
         <div className="flex flex-col gap-4 h-full">
           <DailyUsageCard
             dailyUsage={dailyUsage}
@@ -165,10 +173,10 @@ export default function DashboardPage() {
           />
         </div>
       </div>
-export default function DashboardPage() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold">Dashboard</h1>
+
+      <div className="w-full">
+        {showChart && <ConsumptionTrend data={chartData} />}
+      </div>
     </div>
   );
 }
