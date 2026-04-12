@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Sidebar from "@/components/layouts/sidebar";
-import NavbarAdmin from "@/components/layouts/navbar/NavbarAdmin";
-import DeviceStatusBar from "@/components/layouts/navbar/DeviceStatusBar";
+import NavbarAdmin from "@/components/layouts/navbar/navbar-admin";
+import DeviceStatusBar from "@/components/layouts/navbar/device-status-bar";
 
 export default function AdminLayout({
   children,
