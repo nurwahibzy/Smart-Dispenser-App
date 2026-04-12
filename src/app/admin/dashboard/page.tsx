@@ -3,9 +3,16 @@
 import WaterLevelSection from "@/features/water/water-level-section";
 import TdsCard from "@/components/cards/tds-card";
 import DailyUsageCard from "@/components/cards/daily-usage-card";
+import ValveControl from "@/components/cards/valve-control-card";
+
 import { useDeviceData } from "@/lib/hooks/useDeviceData";
 import { useTransactionData } from "@/lib/hooks/useTransactionData";
 import { calculateDailyUsage } from "@/lib/utils/transaction";
+import { sendToggleValveCommand } from "@/features/device/infrastructure/device.firebase";
+
+// Simulasi valve
+import { set, ref } from "firebase/database";
+import { rtdb } from "@/lib/firebase/client";
 
 export default function DashboardPage() {
   const { data, loading } = useDeviceData();
@@ -20,6 +27,7 @@ export default function DashboardPage() {
   }
 
   const sensors = data?.sensors;
+  const status = data?.status;
 
   const { dailyUsage, totalDispenses } = calculateDailyUsage(transactions);
 
@@ -34,18 +42,48 @@ export default function DashboardPage() {
       </div>
 
       {/* CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
-        {/* Water Level */}
-        <WaterLevelSection />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* LEFT */}
+        <div className="lg:col-span-1">
+          <WaterLevelSection />
+        </div>
 
-        {/* TDS */}
-        <TdsCard tds={sensors?.tds || 0} />
+        {/* MIDDLE */}
+        <div className="flex flex-col gap-4 h-full">
+          <TdsCard tds={sensors?.tds || 0} />
 
-        {/* Daily Usage REAL */}
-        <DailyUsageCard
-          dailyUsage={dailyUsage}
-          totalDispenses={totalDispenses}
-        />
+          {/* Code asli */}
+          {/* <ValveControl
+            isOpen={status?.valveOpen || false}
+            onToggle={() => {
+              console.log("CLICKED");
+              sendToggleValveCommand();
+            }}
+          /> */}
+
+          {/* Code Simulasi  */}
+          <ValveControl
+            isOpen={status?.valveOpen || false}
+            onToggle={async () => {
+              await sendToggleValveCommand();
+
+              // SIMULASI DEVICE RESPONSE
+              await set(
+                ref(rtdb, "devices/dispenser-1/status/valveOpen"),
+                !status?.valveOpen,
+              );
+            }}
+            className="flex-1"
+          />
+        </div>
+
+        {/* RIGHT */}
+        <div>
+          <DailyUsageCard
+            dailyUsage={dailyUsage}
+            totalDispenses={totalDispenses}
+          />
+        </div>
       </div>
     </div>
   );

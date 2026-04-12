@@ -1,12 +1,24 @@
 export type DeviceData = {
   sensors: {
-    glassDetected: boolean;
-    tds: number;
     waterLevel: number;
+    tds: number;
+    glassDetected: boolean;
   };
   status: {
     lastUpdated: number;
     online: boolean;
-    systemStatus: string;
+    systemStatus?: string;
+    valveOpen?: boolean;
+  };
+  commands?: {
+    toggleValve?: {
+      action: string;
+      timestamp: number;
+    };
+    dispense?: {
+      volume: number;
+      status: string;
+      timestamp?: number;
+    };
   };
 };
