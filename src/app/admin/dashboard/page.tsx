@@ -7,7 +7,7 @@ import TdsCard from "@/components/cards/tds-card";
 import DailyUsageCard from "@/components/cards/daily-usage-card";
 import ValveControl from "@/components/cards/valve-control-card";
 import VolumeControl from "@/components/cards/volume-controle-card";
-import { ConsumptionTrend } from "@/components/charts/consumption-trends-chart";
+import { ConsumptionTrend } from "@/features/transaction/components/consumption-trends-chart";
 
 import { groupTransactionsByDay } from "@/lib/utils/chart";
 import { useDeviceData } from "@/lib/hooks/useDeviceData";

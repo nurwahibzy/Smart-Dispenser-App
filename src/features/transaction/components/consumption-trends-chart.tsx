@@ -1,7 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import { TrendChart } from "./trend-chart";
+import { TrendChart } from "@/components/charts/trend-chart";
 
 type ChartData = {
   day: string;
