@@ -13,15 +13,8 @@ export default function NavbarAdmin({
   return (
     <header className="bg-white border-b border-blue-100 sticky top-0 z-30 shadow-sm">
       <div className="px-6 py-4 flex items-center justify-between">
-        {/* LOGO */}
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center">
-            <Droplets size={18} className="text-white" />
-          </div>
-        </div>
-
         {/* RIGHT */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 ml-auto">
           {/* Device Status */}
           <DeviceStatusBar
             online={online}
