@@ -11,6 +11,7 @@ import {
   Menu,
 } from "lucide-react";
 import { useState } from "react";
+import { signOut } from "next-auth/react";
 
 const menuItems = [
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
@@ -86,6 +87,7 @@ export default function Sidebar() {
       {/* BOTTOM */}
       <div>
         <button
+          onClick={() => signOut({ callbackUrl: "/admin/login" })}
           className={`w-full flex items-center ${
             isOpen ? "justify-start" : "justify-center"
           } gap-3 px-3 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-all duration-200`}

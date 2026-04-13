@@ -1,29 +1,37 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { authService } from "@/features/auth/service/authServices";
-import { LoginCredentials } from "../../../types/auth";
+import { useRouter, useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export function useLogin() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const router = useRouter();
 
-  async function login(credentials: LoginCredentials) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const callbackUrl = searchParams.get("callbackUrl") || "/admin/dashboard";
+
+  async function login(email: string, password: string) {
     setError("");
     setLoading(true);
 
     try {
-      await authService.login(credentials.email, credentials.password);
-      router.push("/admin/dashboard");
-    } catch (err) {
-      const error = err as Error;
-      if (error.message === "Akses ditolak") {
-        setError("Akun ini bukan admin.");
-      } else {
-        setError("Email atau password salah. Silahkan coba lagi.");
+      const res = await signIn("credentials", {
+        email,
+        password,
+        redirect: false, 
+      });
+
+      if (res?.error) {
+        setError("Email atau password salah.");
+        return;
       }
+
+      router.push(callbackUrl);
+    } catch (err) {
+      setError("Terjadi kesalahan.");
     } finally {
       setLoading(false);
     }
