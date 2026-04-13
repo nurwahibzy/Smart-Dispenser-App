@@ -1,8 +1,9 @@
-import { ref, get, set } from "firebase/database";
+import { ref, get, set, onValue } from "firebase/database";
 import { rtdb } from "@/lib/firebase/client";
+import type { DeviceData } from "@/types/device";
 
 // ─── GET DEVICE DATA ─────────────────────────────────────
-export const getDeviceData = async () => {
+export const getDeviceData = async (): Promise<DeviceData | null> => {
   try {
     const snapshot = await get(ref(rtdb, "devices/dispenser-1"));
 
@@ -11,14 +12,32 @@ export const getDeviceData = async () => {
       return null;
     }
 
-    return snapshot.val();
+    return snapshot.val() as DeviceData; // type safe
   } catch (error) {
     console.error("ERROR GET DEVICE:", error);
     return null;
   }
 };
 
-// ─── DISPENSE COMMAND ────────────────────────────────────
+// ─── SUBSCRIBE REALTIME───────────────────────
+export const subscribeDeviceStatus = (
+  callback: (data: DeviceData | null) => void,
+) => {
+  const deviceRef = ref(rtdb, "devices/dispenser-1");
+
+  const unsubscribe = onValue(deviceRef, (snapshot) => {
+    if (!snapshot.exists()) {
+      callback(null);
+      return;
+    }
+
+    callback(snapshot.val() as DeviceData);
+  });
+
+  return () => unsubscribe();
+};
+
+// ─── DISPENSE COMMAND ─────────────────────
 export const sendDispenseCommand = async (volume: number) => {
   try {
     await set(ref(rtdb, "devices/dispenser-1/commands/dispense"), {
@@ -33,7 +52,7 @@ export const sendDispenseCommand = async (volume: number) => {
   }
 };
 
-// ─── TOGGLE VALVE ───────────────────────────────────────
+// ─── TOGGLE VALVE ─────────────────────────
 export const sendToggleValveCommand = async () => {
   try {
     await set(ref(rtdb, "devices/dispenser-1/commands/toggleValve"), {
