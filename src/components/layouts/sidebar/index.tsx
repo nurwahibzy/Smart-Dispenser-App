@@ -13,26 +13,10 @@ import {
 import { useState } from "react";
 
 const menuItems = [
-  {
-    name: "Dashboard",
-    href: "/admin/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    name: "Profile",
-    href: "/admin/profile",
-    icon: User,
-  },
-  {
-    name: "Helpdesk",
-    href: "/admin/helpdesk",
-    icon: HelpCircle,
-  },
-  {
-    name: "Manage Admin",
-    href: "/admin/manage-admins",
-    icon: Users,
-  },
+  { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
+  { name: "Profile", href: "/admin/profile", icon: User },
+  { name: "Helpdesk", href: "/admin/helpdesk", icon: HelpCircle },
+  { name: "Manage Admin", href: "/admin/manage-admins", icon: Users },
 ];
 
 export default function Sidebar() {
@@ -41,16 +25,17 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`h-screen ${
+      className={`sticky top-0 h-screen ${
         isOpen ? "w-64" : "w-20"
-      } bg-white border-r border-blue-100 shadow-sm flex flex-col justify-between p-4 transition-all duration-300`}
+      } bg-white border-r border-blue-100 shadow-sm flex flex-col justify-between p-4 
+      transition-all duration-300`}
     >
       {/* TOP */}
       <div>
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           {isOpen && (
-            <div>
+            <div className="transition-opacity duration-200">
               <h1 className="text-lg font-bold text-blue-600">
                 Smart Dispenser
               </h1>
@@ -58,7 +43,6 @@ export default function Sidebar() {
             </div>
           )}
 
-          {/* Toggle Button (titik 3 / menu) */}
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="p-2 rounded-lg hover:bg-blue-50 transition"
@@ -80,14 +64,19 @@ export default function Sidebar() {
                 className={`flex items-center ${
                   isOpen ? "justify-start" : "justify-center"
                 } gap-3 px-3 py-3 rounded-xl transition-all duration-200
-                  ${
-                    isActive
-                      ? "bg-blue-100 text-blue-600 font-semibold"
-                      : "text-gray-600 hover:bg-blue-50 hover:text-blue-600"
-                  }`}
+                ${
+                  isActive
+                    ? "bg-blue-100 text-blue-600 font-semibold"
+                    : "text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                }`}
               >
                 <Icon size={20} />
-                {isOpen && <span>{item.name}</span>}
+
+                {isOpen && (
+                  <span className="transition-opacity duration-200">
+                    {item.name}
+                  </span>
+                )}
               </Link>
             );
           })}
@@ -99,10 +88,13 @@ export default function Sidebar() {
         <button
           className={`w-full flex items-center ${
             isOpen ? "justify-start" : "justify-center"
-          } gap-3 px-3 py-3 rounded-xl text-red-500 hover:bg-red-50 transition`}
+          } gap-3 px-3 py-3 rounded-xl text-red-500 hover:bg-red-50 transition-all duration-200`}
         >
           <LogOut size={20} />
-          {isOpen && <span>Logout</span>}
+
+          {isOpen && (
+            <span className="transition-opacity duration-200">Logout</span>
+          )}
         </button>
       </div>
     </aside>
