@@ -14,7 +14,6 @@ import { groupTransactionsByDay } from "@/lib/utils/chart";
 import { useDeviceData } from "@/lib/hooks/useDeviceData";
 import { useTransactionData } from "@/lib/hooks/useTransactionData";
 import { calculateDailyUsage } from "@/lib/utils/transaction";
-
 import { toggleValveSimulation } from "@/features/device/application/valve.simulation";
 import {
   startAutoDispense,
