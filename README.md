@@ -164,13 +164,13 @@ Contributions are welcome!
 
 ---
 
-👨‍💻 Author
+## 👨‍💻 Author
 
 Developed by 🚀
 
-Ananda Rahmawati — 2341720048
-Nurwahib Zakki Yahya — 2341720154
-Reika Amalia Syahputri — 2341720173
-Satrio Wisnu Adi Pratama — 2341720219
+- Ananda Rahmawati — 2341720048
+- Nurwahib Zakki Yahya — 2341720154
+- Reika Amalia Syahputri — 2341720173
+- Satrio Wisnu Adi Pratama — 2341720219
 
 Smart Dispenser Project
