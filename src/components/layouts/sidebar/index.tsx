@@ -109,7 +109,7 @@ export default function Sidebar() {
       </div>
 
       {/* BOTTOM */}
-      <div className="hidden md:block">
+      <div className={`${!isOpen ? "hidden md:block" : ""}`}>
         <button
           onClick={() => signOut({ callbackUrl: "/admin/login" })}
           className={`
