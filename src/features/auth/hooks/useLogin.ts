@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { authService } from "@/services/authServices";
-import { LoginCredentials } from "../type";
+import { authService } from "@/features/auth/service/authServices";
+import { LoginCredentials } from "../../../types/auth";
 
 export function useLogin() {
   const [loading, setLoading] = useState(false);
@@ -22,7 +22,7 @@ export function useLogin() {
       if (error.message === "Akses ditolak") {
         setError("Akun ini bukan admin.");
       } else {
-        setError("Email atau password salah. Coba lagi.");
+        setError("Email atau password salah. Silahkan coba lagi.");
       }
     } finally {
       setLoading(false);
