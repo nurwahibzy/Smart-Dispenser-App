@@ -21,11 +21,7 @@ import {
   stopAutoDispense,
 } from "@/features/device/application/dispense.controller";
 
-export default function DashboardPage({
-  isSidebarOpen,
-}: {
-  isSidebarOpen?: boolean;
-}) {
+export default function DashboardPage() {
   const { data, loading } = useDeviceData();
   const { data: transactions, loading: trxLoading } = useTransactionData();
 
@@ -46,17 +42,15 @@ export default function DashboardPage({
     return groupTransactionsByDay(transactions || []);
   }, [transactions]);
 
-  // 🔥 FREEZE CHART
+  // 🔥 FREEZE CHART (pakai state lokal pengganti props)
   const [showChart, setShowChart] = useState(true);
 
   useEffect(() => {
-    if (isSidebarOpen === undefined) return;
-
     setShowChart(false);
     const t = setTimeout(() => setShowChart(true), 250);
 
     return () => clearTimeout(t);
-  }, [isSidebarOpen]);
+  }, []); // ⬅️ tidak tergantung props lagi
 
   if (loading || trxLoading) {
     return (
