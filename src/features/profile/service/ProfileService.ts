@@ -18,6 +18,7 @@ export const profileService = {
       status: data.status,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
+      photoURL: data.photoURL,
     };
   },
 

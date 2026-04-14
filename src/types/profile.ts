@@ -5,6 +5,8 @@ export interface AdminProfile {
   role: string;
   status: boolean;
   createdAt: string;
+  updatedAt: string;
+  photoURL?: string;
 }
 
 export interface EditNamaPayload {

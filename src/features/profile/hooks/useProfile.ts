@@ -13,7 +13,6 @@ export function useProfile() {
     () => profileService.getProfile(uid!),
     {
       revalidateOnFocus: false,
-      dedupingInterval: 60000,
     },
   );
 
@@ -21,6 +20,6 @@ export function useProfile() {
     profile: data,
     isLoading,
     error,
-    mutate, // ✅ PAKAI INI
+    mutate, 
   };
 }
