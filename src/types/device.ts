@@ -21,4 +21,11 @@ export type DeviceData = {
       timestamp?: number;
     };
   };
+  kiosk?: {
+    isDispensing: boolean;
+    targetVolume: number;
+    filledVolume: number;
+    status: "idle" | "filling" | "completed";
+    updatedAt: number;
+  };
 };
