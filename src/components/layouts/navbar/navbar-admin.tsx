@@ -3,6 +3,7 @@
 import type { NavbarAdminProps } from "@/types/navbar";
 import { User } from "lucide-react";
 import NotificationBell from "@/components/layouts/navbar/notification-bell";
+import Link from "next/link";
 
 export default function NavbarAdmin({
   online,
@@ -37,16 +38,18 @@ export default function NavbarAdmin({
           <NotificationBell />
 
           {/* PROFILE */}
-          <div className="flex items-center gap-3 cursor-pointer hover:bg-blue-50 px-3 py-2 rounded-xl transition">
-            <div className="w-8 h-8 bg-blue-500 text-white flex items-center justify-center rounded-full">
-              <User size={16} />
-            </div>
+          <Link href="/admin/profile">
+            <div className="flex items-center gap-3 cursor-pointer hover:bg-blue-50 px-3 py-2 rounded-xl transition">
+              <div className="w-8 h-8 bg-blue-500 text-white flex items-center justify-center rounded-full">
+                <User size={16} />
+              </div>
 
-            <div className="hidden sm:block">
-              <p className="text-sm font-medium text-gray-700">Admin</p>
-              <p className="text-xs text-gray-400">Super Admin</p>
+              <div className="hidden sm:block">
+                <p className="text-sm font-medium text-gray-700">Admin</p>
+                <p className="text-xs text-gray-400">Super Admin</p>
+              </div>
             </div>
-          </div>
+          </Link>
         </div>
       </div>
     </header>
