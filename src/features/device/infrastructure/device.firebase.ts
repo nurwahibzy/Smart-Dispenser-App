@@ -2,6 +2,14 @@ import { ref, get, set, onValue } from "firebase/database";
 import { rtdb } from "@/lib/firebase/client";
 import type { DeviceData } from "@/types/device";
 
+export type KioskProgress = {
+  isDispensing: boolean;
+  targetVolume: number;
+  filledVolume: number;
+  status: "idle" | "filling" | "completed";
+  updatedAt: number;
+};
+
 // ─── GET DEVICE DATA ─────────────────────────────────────
 export const getDeviceData = async (): Promise<DeviceData | null> => {
   try {
@@ -64,4 +72,40 @@ export const sendToggleValveCommand = async () => {
   } catch (error) {
     console.error("ERROR TOGGLE VALVE:", error);
   }
+};
+
+// ─── MEMBER DASHBOARD ─────────────────────────
+export const setKioskProgress = async (payload: KioskProgress) => {
+  try {
+    await set(ref(rtdb, "devices/dispenser-1/kiosk"), payload);
+  } catch (error) {
+    console.error("ERROR SET KIOSK PROGRESS:", error);
+  }
+};
+
+export const resetKioskProgress = async () => {
+  await setKioskProgress({
+    isDispensing: false,
+    targetVolume: 0,
+    filledVolume: 0,
+    status: "idle",
+    updatedAt: Date.now(),
+  });
+};
+
+export const subscribeKioskProgress = (
+  callback: (data: KioskProgress | null) => void,
+) => {
+  const kioskRef = ref(rtdb, "devices/dispenser-1/kiosk");
+
+  const unsubscribe = onValue(kioskRef, (snapshot) => {
+    if (!snapshot.exists()) {
+      callback(null);
+      return;
+    }
+
+    callback(snapshot.val() as KioskProgress);
+  });
+
+  return () => unsubscribe();
 };
