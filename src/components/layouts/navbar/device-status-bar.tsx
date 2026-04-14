@@ -34,12 +34,10 @@ export default function DeviceStatusBar() {
   };
 
   useEffect(() => {
-    // INITIAL LOAD
     getDeviceData().then((data) => {
       applyData(data);
     });
 
-    // REALTIME
     const unsubscribe = subscribeDeviceStatus((data) => {
       applyData(data);
     });
@@ -59,8 +57,8 @@ export default function DeviceStatusBar() {
   };
 
   return (
-    <div className="flex items-center gap-3 bg-white/80 backdrop-blur rounded-xl px-4 py-2 border border-slate-100 shadow-sm text-sm">
-      {/* STATUS */}
+    <div className="flex items-center gap-3 bg-white/80 backdrop-blur rounded-xl px-3 py-2 md:px-4 border border-slate-100 shadow-sm text-sm">
+      {/* STATUS (selalu tampil) */}
       <div
         className={`flex items-center gap-1.5 ${
           online ? "text-emerald-500" : "text-slate-400"
@@ -75,15 +73,18 @@ export default function DeviceStatusBar() {
         )}
       </div>
 
-      <span className="text-slate-200">|</span>
+      {/* HIDDEN DI MOBILE */}
+      <span className="hidden md:inline text-slate-200">|</span>
 
-      {/* LAST UPDATE */}
-      <span className="text-slate-400 text-xs">Updated {lastUpdate}</span>
+      {/* LAST UPDATE (desktop only) */}
+      <span className="hidden md:inline text-slate-400 text-xs">
+        Updated {lastUpdate}
+      </span>
 
-      {/* REFRESH */}
+      {/* REFRESH (desktop only) */}
       <button
         onClick={handleRefresh}
-        className="text-slate-400 hover:text-blue-600 transition-colors"
+        className="hidden md:inline text-slate-400 hover:text-blue-600 transition-colors"
       >
         <RefreshCw size={13} className={spinning ? "animate-spin" : ""} />
       </button>
