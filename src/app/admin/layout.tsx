@@ -29,7 +29,7 @@ export default function AdminLayout({
 
   return (
     <SessionProvider>
-      <div className="flex">
+      <div className="flex flex-col md:flex-row">
         {!hideSidebar && <Sidebar />}
 
         <div className="flex-1 flex flex-col">
@@ -44,7 +44,9 @@ export default function AdminLayout({
             />
           )}
 
-          <main className="flex-1 bg-gray-50 p-6">{children}</main>
+          <main className="flex-1 bg-gray-50 px-3 py-4 sm:px-4 md:px-6">
+            {children}
+          </main>
         </div>
       </div>
     </SessionProvider>
