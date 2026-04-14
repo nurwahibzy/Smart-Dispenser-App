@@ -17,7 +17,7 @@ const menuItems = [
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
   { name: "Profile", href: "/admin/profile", icon: User },
   { name: "Helpdesk", href: "/admin/helpdesk", icon: HelpCircle },
-  { name: "Manage Admin", href: "/admin/manage-admins", icon: Users },
+ // { name: "Manage Admin", href: "/admin/manage-admins", icon: Users },
 ];
 
 export default function Sidebar() {

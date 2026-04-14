@@ -61,6 +61,7 @@ export const authOptions: NextAuthOptions = {
       account?: Account | null;
     }) {
       if (account?.provider === "credentials" && user) {
+        token.id = user.id;
         token.email = user.email;
         token.name = user.name;
         token.role = user.role;
@@ -70,6 +71,7 @@ export const authOptions: NextAuthOptions = {
 
     async session({ session, token }: { session: Session; token: JWT }) {
       if (token.email && session.user) {
+        session.user.id = token.id as string;
         session.user.email = token.email;
         session.user.name = token.name as string;
         session.user.role = token.role;
