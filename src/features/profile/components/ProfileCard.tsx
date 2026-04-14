@@ -97,14 +97,21 @@ export default function ProfileCard({ profile, onRefresh }: Props) {
           <div className="w-20 h-20 rounded-2xl bg-blue-600 border-[3px] border-white flex items-center justify-center text-white text-2xl font-medium overflow-hidden shadow-sm">
             {foto ? (
               <Image
-                src={`${foto}?t=${Date.now()}`}
+                src={foto}
                 alt="Foto profil"
                 width={80}
                 height={80}
+                unoptimized
                 className="w-full h-full object-cover"
               />
+            ) : profile.name ? (
+              <div className="w-full h-full flex items-center justify-center bg-blue-600 text-white text-xl font-semibold">
+                {profile.name.charAt(0).toUpperCase()}
+              </div>
             ) : (
-              profile.name?.charAt(0)?.toUpperCase()
+              <div className="w-full h-full flex items-center justify-center bg-gray-300 text-white">
+                <User size={24} />
+              </div>
             )}
           </div>
 
