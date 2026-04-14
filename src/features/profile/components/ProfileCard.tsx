@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { AdminProfile } from "@/types/profile";
 import ModalEditProfile from "./ModalEdit";
 import ModalGantiPassword from "./ModalGantiPassword";
-import { Pencil } from "lucide-react";
+import { Pencil, User, Mail, ShieldCheck, Radio } from "lucide-react";
 import { useEditFoto } from "../hooks/useEditFoto";
 import Image from "next/image";
-import { useEffect } from "react";
 
 interface Props {
   profile: AdminProfile;
@@ -19,14 +18,13 @@ export default function ProfileCard({ profile, onRefresh }: Props) {
   const [modalPassword, setModalPassword] = useState(false);
   const [loadingFoto, setLoadingFoto] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
-
   const [foto, setFoto] = useState(profile.photoURL);
+
   useEffect(() => {
     setFoto(profile.photoURL);
   }, [profile.photoURL]);
 
   const inputFotoRef = useRef<HTMLInputElement>(null);
-
   const { editFoto } = useEditFoto();
 
   function tampilToast(pesan: string) {
@@ -39,24 +37,15 @@ export default function ProfileCard({ profile, onRefresh }: Props) {
   ) {
     const file = e.target.files?.[0];
     if (!file) return;
-
     try {
       setLoadingFoto(true);
-
       const photoURL = await editFoto(profile.id, file);
-
-     // console.log("NEW URL:", photoURL);
-     // console.log("OLD URL:", profile.photoURL);
-
       if (!photoURL) {
         tampilToast("Gagal upload foto");
         return;
       }
-
       setFoto(photoURL);
-
       await onRefresh();
-
       tampilToast("Foto profil berhasil diperbarui");
     } catch {
       tampilToast("Gagal upload foto.");
@@ -65,25 +54,53 @@ export default function ProfileCard({ profile, onRefresh }: Props) {
     }
   }
 
+  const infoRows = [
+    { icon: <User size={15} />, label: "Nama lengkap", value: profile.name },
+    { icon: <Mail size={15} />, label: "Email", value: profile.email },
+    {
+      icon: <ShieldCheck size={15} />,
+      label: "Role",
+      value: profile.role ?? "Super Admin",
+    },
+    {
+      icon: <Radio size={15} />,
+      label: "Status",
+      value: profile.status ? "Aktif" : "Nonaktif",
+      valueClass: profile.status ? "text-green-600" : "text-red-500",
+    },
+  ];
+
   return (
-    <div className="bg-white border rounded-2xl p-8 w-full shadow-sm">
+    <div className="w-full max-w-sm mx-auto bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
       {/* TOAST */}
       {toast && (
-        <div className="fixed top-5 right-5 bg-black text-white px-4 py-2 rounded-lg">
+        <div className="fixed top-5 right-5 z-50 bg-gray-900 text-white text-sm px-4 py-2 rounded-lg shadow-md">
           {toast}
         </div>
       )}
 
+      {/* HEADER BANNER */}
+      <div className="h-24 bg-blue-600 relative">
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, white 1px, transparent 1px)",
+            backgroundSize: "20px 20px",
+          }}
+        />
+      </div>
+
       {/* AVATAR */}
-      <div className="flex flex-col items-center gap-3 mb-8">
-        <div className="relative w-24 h-24">
-          <div className="w-24 h-24 rounded-3xl bg-blue-600 flex items-center justify-center text-white text-3xl overflow-hidden">
+      <div className="flex flex-col items-center -mt-10 px-6 pb-6">
+        <div className="relative mb-3">
+          <div className="w-20 h-20 rounded-2xl bg-blue-600 border-[3px] border-white flex items-center justify-center text-white text-2xl font-medium overflow-hidden shadow-sm">
             {foto ? (
               <Image
                 src={`${foto}?t=${Date.now()}`}
                 alt="Foto profil"
-                width={96}
-                height={96}
+                width={80}
+                height={80}
                 className="w-full h-full object-cover"
               />
             ) : (
@@ -91,13 +108,12 @@ export default function ProfileCard({ profile, onRefresh }: Props) {
             )}
           </div>
 
-          {/* ICON */}
           <button
             onClick={() => inputFotoRef.current?.click()}
             disabled={loadingFoto}
-            className="absolute -bottom-1 -right-1 bg-white p-1 rounded-full disabled:opacity-50"
+            className="absolute -bottom-1 -right-1 bg-white border border-gray-200 p-1 rounded-full shadow-sm disabled:opacity-50 hover:bg-gray-50 transition"
           >
-            <Pencil size={14} />
+            <Pencil size={12} className="text-gray-500" />
           </button>
 
           <input
@@ -109,30 +125,51 @@ export default function ProfileCard({ profile, onRefresh }: Props) {
           />
         </div>
 
-        <p className="font-semibold">
-          {loadingFoto ? "Uploading..." : profile.name}
-        </p>
-        <p className="text-sm text-gray-400">{profile.email}</p>
+        {/* DIVIDER */}
+        <div className="w-full h-px bg-gray-100 mb-4" />
+
+        {/* INFO ROWS */}
+        <div className="w-full space-y-1 mb-5">
+          {infoRows.map(({ icon, label, value, valueClass }) => (
+            <div
+              key={label}
+              className="flex items-center gap-3 py-2 border-b border-gray-50 last:border-0"
+            >
+              <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 flex-shrink-0">
+                {icon}
+              </div>
+              <div className="min-w-0">
+                <p className="text-[11px] text-gray-400 leading-none mb-0.5">
+                  {label}
+                </p>
+                <p
+                  className={`text-sm font-medium truncate ${valueClass ?? "text-gray-800"}`}
+                >
+                  {value}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* BUTTONS */}
+        <div className="grid grid-cols-2 gap-2 w-full">
+          <button
+            onClick={() => setModalEdit(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2.5 rounded-xl transition"
+          >
+            Edit Profil
+          </button>
+          <button
+            onClick={() => setModalPassword(true)}
+            className="bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium py-2.5 rounded-xl transition"
+          >
+            Ganti Password
+          </button>
+        </div>
       </div>
 
-      {/* BUTTON */}
-      <div className="flex gap-2">
-        <button
-          onClick={() => setModalEdit(true)}
-          className="flex-1 bg-blue-600 text-white py-2 rounded"
-        >
-          Edit Profile
-        </button>
-
-        <button
-          onClick={() => setModalPassword(true)}
-          className="flex-1 bg-yellow-500 text-white py-2 rounded"
-        >
-          Password
-        </button>
-      </div>
-
-      {/* MODAL EDIT */}
+      {/* MODALS */}
       <ModalEditProfile
         open={modalEdit}
         uid={profile.id}
@@ -141,16 +178,20 @@ export default function ProfileCard({ profile, onRefresh }: Props) {
         onClose={() => setModalEdit(false)}
         onSuccess={async () => {
           setModalEdit(false);
-          await onRefresh();
           tampilToast("Profil berhasil diperbarui");
+          setTimeout(() => {
+            onRefresh();
+          }, 500);
         }}
       />
 
-      {/* MODAL PASSWORD */}
       {modalPassword && (
         <ModalGantiPassword
           onTutup={() => setModalPassword(false)}
-          onSukses={() => tampilToast("Password berhasil diganti")}
+          onSukses={() => {
+            setModalPassword(false);
+            tampilToast("Password berhasil diganti");
+          }}
         />
       )}
     </div>
