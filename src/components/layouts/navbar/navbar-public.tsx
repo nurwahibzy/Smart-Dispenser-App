@@ -1,38 +1,35 @@
 "use client";
 
-import { Droplets } from "lucide-react";
 import Link from "next/link";
 
 export default function NavbarPublic() {
   return (
-    <header className="h-16 bg-white border-b border-blue-100 flex items-center justify-between px-6 shadow-sm">
+    <header className="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-6 md:px-8">
       {/* LEFT (Brand) */}
-      <div className="flex items-center gap-3">
-        <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center">
-          <Droplets size={18} className="text-white" />
-        </div>
-        <h1 className="text-lg font-bold text-blue-600">Smart Dispenser</h1>
+      <div className="flex items-center gap-2">
+        <div className="h-2.5 w-2.5 rounded-full bg-blue-600" />
+        <h1 className="text-xs md:text-sm font-bold text-blue-600">Smart Dispenser</h1>
       </div>
 
       {/* RIGHT */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3 md:gap-4">
         <Link
-          href="/dashboard"
-          className="text-sm text-gray-600 hover:text-blue-600"
+          href="/admin/dashboard"
+          className="text-[11px] md:text-xs text-blue-600 hover:text-blue-700"
         >
           Dashboard
         </Link>
 
         <Link
           href="/helpdesk"
-          className="text-sm text-gray-600 hover:text-blue-600"
+          className="text-[11px] md:text-xs text-blue-600 hover:text-blue-700"
         >
           Helpdesk
         </Link>
 
         <Link
           href="/admin/login"
-          className="bg-blue-500 text-white px-4 py-2 rounded-xl text-sm hover:bg-blue-600 transition"
+          className="bg-blue-600 text-white px-3 py-1.5 rounded-md text-[11px] md:text-xs font-semibold hover:bg-blue-700 transition"
         >
           Login
         </Link>
