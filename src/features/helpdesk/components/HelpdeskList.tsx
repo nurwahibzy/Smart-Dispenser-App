@@ -16,8 +16,19 @@ export default function AdminHelpdeskList() {
   );
 
   // state untuk menyimpan status sementara saat admin memilih opsi baru sebelum disimpan
-  const [draftStatus, setDraftStatus] = useState<string>("");
+  const [draftStatus, setDraftStatus] = useState<HelpdeskTicket["status"] | "">(
+    "",
+  );
   const [isSaving, setIsSaving] = useState(false);
+
+  // Definisi tipe untuk parameter tanggal, termasuk format bawaan Firebase Timestamp
+  type TimestampOrDate =
+    | string
+    | number
+    | Date
+    | { toDate: () => Date }
+    | null
+    | undefined;
 
   useEffect(() => {
     const loadTickets = async () => {
@@ -30,7 +41,7 @@ export default function AdminHelpdeskList() {
   // fungsi untuk membuka detail tiket saat tombol diklik, sekaligus menyimpan status awal ke draftStatus
   const handleOpenTicket = (ticket: HelpdeskTicket) => {
     setSelectedTicket(ticket);
-    setDraftStatus(ticket.status); 
+    setDraftStatus(ticket.status);
   };
 
   const handleCloseTicket = () => {
@@ -50,10 +61,15 @@ export default function AdminHelpdeskList() {
       // memperbarui status di state lokal agar UI langsung sinkron tanpa perlu reload
       setTickets(
         tickets.map((t) =>
-          t.id === selectedTicket.id ? { ...t, status: draftStatus as any } : t,
+          t.id === selectedTicket.id
+            ? { ...t, status: draftStatus as HelpdeskTicket["status"] }
+            : t,
         ),
       );
-      setSelectedTicket({ ...selectedTicket, status: draftStatus as any });
+      setSelectedTicket({
+        ...selectedTicket,
+        status: draftStatus as HelpdeskTicket["status"],
+      });
       alert("Status berhasil diperbarui.");
       handleCloseTicket();
     } catch (err) {
@@ -64,16 +80,21 @@ export default function AdminHelpdeskList() {
   };
 
   // fungsi format tanggal
-  const formatDate = (dateValue: any) => {
+  const formatDate = (dateValue: TimestampOrDate) => {
     if (!dateValue) return "-";
 
     let dateObj: Date;
 
-    // mengecek apakah ini Firebase Timestamp (objek dengan method toDate)
-    if (typeof dateValue?.toDate === "function") {
+    // menangani format Firebase Timestamp yang memiliki method toDate()
+    if (
+      typeof dateValue === "object" &&
+      "toDate" in dateValue &&
+      typeof dateValue.toDate === "function"
+    ) {
       dateObj = dateValue.toDate();
     } else {
-      dateObj = new Date(dateValue);
+      // menangani format string, number, atau Date biasa
+      dateObj = new Date(dateValue as string | number | Date);
     }
 
     if (isNaN(dateObj.getTime())) {
@@ -92,7 +113,7 @@ export default function AdminHelpdeskList() {
 
   // detail tiket
   if (selectedTicket) {
-    // mengecek apakah ada perubahan status yang belum disimpan 
+    // mengecek apakah ada perubahan status yang belum disimpan
     const hasUnsavedChanges = draftStatus !== selectedTicket.status;
 
     return (
@@ -127,13 +148,13 @@ export default function AdminHelpdeskList() {
             <div className="flex items-start gap-2 mt-1">
               <select
                 value={draftStatus}
-                onChange={(e) => setDraftStatus(e.target.value)}
+                onChange={(e) =>
+                  setDraftStatus(e.target.value as HelpdeskTicket["status"])
+                }
                 className="block w-full p-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-gray-50"
               >
                 <option value="pending">Pending</option>
-                <option value="in_progress">
-                  In Progress
-                </option>
+                <option value="in_progress">In Progress</option>
                 <option value="resolved">Resolved</option>
               </select>
 
