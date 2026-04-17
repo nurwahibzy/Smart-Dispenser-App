@@ -6,7 +6,6 @@ import {
   LayoutDashboard,
   User,
   HelpCircle,
-  Users,
   LogOut,
   Menu,
 } from "lucide-react";
@@ -113,7 +112,7 @@ export default function Sidebar() {
       {/* BOTTOM */}
       <div className={`${!isOpen ? "hidden md:block" : ""}`}>
         <button
-          onClick={() => signOut({ callbackUrl: "/admin/login" })}
+          onClick={() => signOut({ callbackUrl: "/" })}
           className={`
             w-full flex items-center 
             ${isOpen ? "justify-start" : "justify-center"}
