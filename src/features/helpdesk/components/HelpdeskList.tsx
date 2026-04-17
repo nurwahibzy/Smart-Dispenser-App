@@ -21,6 +21,9 @@ export default function AdminHelpdeskList() {
   );
   const [isSaving, setIsSaving] = useState(false);
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
+
   // Definisi tipe untuk parameter tanggal, termasuk format bawaan Firebase Timestamp
   type TimestampOrDate =
     | string
@@ -111,6 +114,22 @@ export default function AdminHelpdeskList() {
     });
   };
 
+  // fungsi untuk memfilter tiket berdasarkan status dan pencarian teks
+  const filteredTickets = tickets.filter((ticket) => {
+    // Filter berdasarkan status
+    const matchStatus =
+      filterStatus === "all" || ticket.status === filterStatus;
+
+    // Filter pencarian teks (judul, nama pengirim, atau kategori)
+    const searchLower = searchQuery.toLowerCase();
+    const matchSearch =
+      ticket.title.toLowerCase().includes(searchLower) ||
+      ticket.name.toLowerCase().includes(searchLower) ||
+      ticket.category.toLowerCase().includes(searchLower);
+
+    return matchStatus && matchSearch;
+  });
+
   // detail tiket
   if (selectedTicket) {
     // mengecek apakah ada perubahan status yang belum disimpan
@@ -192,9 +211,27 @@ export default function AdminHelpdeskList() {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
       <div className="p-6 border-b">
-        <h2 className="text-xl font-bold text-gray-800">
-          Kelola Laporan (Admin)
-        </h2>
+        <h2 className="text-xl font-bold text-gray-800">Kelola Laporan Helpdesk</h2>
+      </div>
+
+      <div className=" flex flex-col sm:flex-row items-start sm:items-center justify-start gap-4 p-3 border-b">
+        <input
+          type="text"
+          placeholder="Cari judul, nama, kategori..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none w-full sm:w-64"
+        />
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-white"
+        >
+          <option value="all">Semua Status</option>
+          <option value="pending">Menunggu</option>
+          <option value="in_progress">Dikerjakan</option>
+          <option value="resolved">Selesai</option>
+        </select>
       </div>
 
       {isLoading ? (
@@ -217,7 +254,7 @@ export default function AdminHelpdeskList() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {tickets.map((ticket) => (
+              {filteredTickets.map((ticket) => (
                 <tr
                   key={ticket.id}
                   className="hover:bg-gray-50 transition-colors"
@@ -245,6 +282,14 @@ export default function AdminHelpdeskList() {
                   </td>
                 </tr>
               ))}
+              {filteredTickets.length === 0 && tickets.length > 0 && (
+                <tr>
+                  <td colSpan={6} className="p-8 text-center text-gray-500">
+                    Tidak ada laporan yang cocok dengan pencarian.
+                  </td>
+                </tr>
+              )}
+
               {tickets.length === 0 && (
                 <tr>
                   <td colSpan={5} className="p-8 text-center text-gray-500">
