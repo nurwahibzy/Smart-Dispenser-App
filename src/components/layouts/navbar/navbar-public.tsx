@@ -8,13 +8,15 @@ export default function NavbarPublic() {
       {/* LEFT (Brand) */}
       <div className="flex items-center gap-2">
         <div className="h-2.5 w-2.5 rounded-full bg-blue-600" />
-        <h1 className="text-xs md:text-sm font-bold text-blue-600">Smart Dispenser</h1>
+        <Link href="/">
+          <h1 className="text-xs md:text-sm font-bold text-blue-600">Smart Dispenser</h1>
+        </Link>
       </div>
 
       {/* RIGHT */}
       <div className="flex items-center gap-3 md:gap-4">
         <Link
-          href="/admin/dashboard"
+          href="/member/dashboard"
           className="text-[11px] md:text-xs text-blue-600 hover:text-blue-700"
         >
           Dashboard

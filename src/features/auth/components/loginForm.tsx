@@ -3,20 +3,22 @@
 import { useState } from "react";
 import { useLogin } from "@/features/auth/hooks/useLogin";
 import { Droplets } from "lucide-react";
+import { useRouter } from "next/router";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login, loading, error } = useLogin();
+  const router = useRouter();
 
- function handleSubmit(e: React.FormEvent) {
-   e.preventDefault();
-   if (!email || !password) return;
-   login(email, password);
- }
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email || !password) return;
+    login(email, password);
+  }
 
   return (
-   <form onSubmit={handleSubmit} className="flex flex-col gap-5 w-full">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-5 w-full">
       {/* Logo + Judul */}
       <div className="flex flex-col items-center gap-3 mb-2">
         <div className="w-11 h-11 bg-blue-600 rounded-xl flex items-center justify-center">
@@ -64,13 +66,24 @@ export default function LoginForm() {
       )}
 
       {/* Tombol */}
-      <button
-        type="submit"
-        disabled={loading || !email || !password}
-        className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-      >
-        {loading ? "Memproses..." : "Masuk"}
-      </button>
+      <div className="justify-between items-center gap-4 flex flex-col sm:flex-row ">
+        <button
+          type="button"
+          onClick={() => {
+           router.back();
+          }}
+          className="text-blue-600 hover:text-blue-700 font-medium py-2.5 rounded-lg text-sm transition-colors"
+        >
+          Kembali
+        </button>
+        <button
+          type="submit"
+          disabled={loading || !email || !password}
+          className="p-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          {loading ? "Memproses..." : "Masuk"}
+        </button>
+      </div>
     </form>
   );
 }
