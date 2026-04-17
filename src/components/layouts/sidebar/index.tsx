@@ -47,9 +47,11 @@ export default function Sidebar() {
               ${isOpen ? "md:opacity-100 md:w-auto" : "md:opacity-0 md:w-0 md:overflow-hidden"}
             `}
           >
-            <h1 className="text-lg font-bold text-blue-600 whitespace-nowrap">
-              Smart Dispenser
-            </h1>
+            <Link href="/admin/dashboard">
+              <h1 className="text-lg font-bold text-blue-600 whitespace-nowrap">
+                Smart Dispenser
+              </h1>
+            </Link>
             <p className="text-xs text-gray-400 hidden md:block">Admin Panel</p>
           </div>
 
