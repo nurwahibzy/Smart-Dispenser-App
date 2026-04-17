@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { useLogin } from "@/features/auth/hooks/useLogin";
 import { Droplets } from "lucide-react";
+import { useRouter } from "next/router";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login, loading, error } = useLogin();
+  const router = useRouter();
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -68,7 +70,7 @@ export default function LoginForm() {
         <button
           type="button"
           onClick={() => {
-            window.history.back();
+           router.back();
           }}
           className="text-blue-600 hover:text-blue-700 font-medium py-2.5 rounded-lg text-sm transition-colors"
         >
