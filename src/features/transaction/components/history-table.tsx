@@ -18,10 +18,19 @@ export function HistoryTable() {
   const [page, setPage] = useState(1);
   const PER_PAGE = 8;
 
-  // 🔥 FIREBASE
+  // FIREBASE
   useEffect(() => {
-    const unsubscribe = subscribeDispenseHistory(setData);
-    return () => unsubscribe();
+    let isMounted = true;
+
+    const unsubscribe = subscribeDispenseHistory((data) => {
+      if (!isMounted) return;
+      setData(data);
+    });
+
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
   }, []);
 
   const handleSort = (key: SortKey) => {
@@ -45,7 +54,6 @@ export function HistoryTable() {
         event: d.type === "auto" ? "Auto" : "Manual",
         amount: d.actualVolume,
         tds: d.tds,
-        duration: "-", // karena belum ada di firebase
         status: d.status ? "Success" : "Warning",
       };
     });
@@ -165,7 +173,6 @@ export function HistoryTable() {
                 { label: "Event" },
                 { label: "Amount", key: "amount" },
                 { label: "TDS", key: "tds", className: "hidden md:table-cell" },
-                { label: "Duration", className: "hidden md:table-cell" },
                 { label: "Status", className: "hidden md:table-cell" },
               ].map((col) => (
                 <th
@@ -240,10 +247,6 @@ export function HistoryTable() {
                       {row.tds}
                       <span className="text-slate-400 text-xs ml-0.5">ppm</span>
                     </span>
-                  </td>
-
-                  <td className="px-4 py-3 text-sm text-slate-500 hidden md:table-cell">
-                    {row.duration}
                   </td>
 
                   <td className="px-4 py-3 hidden md:table-cell">

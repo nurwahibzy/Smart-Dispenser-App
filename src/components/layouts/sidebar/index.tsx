@@ -16,20 +16,27 @@ export default function Sidebar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
-  // 🔥 AUTO RESPONSIVE STATE
+  // AUTO RESPONSIVE STATE
   useEffect(() => {
+    let isMounted = true;
+
     const handleResize = () => {
+      if (!isMounted) return;
+
       if (window.innerWidth >= 768) {
-        setIsOpen(true); // desktop
+        setIsOpen(true);
       } else {
-        setIsOpen(false); // mobile
+        setIsOpen(false);
       }
     };
 
     handleResize();
     window.addEventListener("resize", handleResize);
 
-    return () => window.removeEventListener("resize", handleResize);
+    return () => {
+      isMounted = false;
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   return (
