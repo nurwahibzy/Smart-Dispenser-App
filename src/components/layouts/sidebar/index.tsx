@@ -2,26 +2,35 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  User,
-  HelpCircle,
-  LogOut,
-  Menu,
-} from "lucide-react";
-import { useState } from "react";
+import { LayoutDashboard, User, HelpCircle, LogOut, Menu } from "lucide-react";
+import { useState, useEffect } from "react";
 import { signOut } from "next-auth/react";
 
 const menuItems = [
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
   { name: "Profile", href: "/admin/profile", icon: User },
   { name: "Helpdesk", href: "/admin/helpdesk", icon: HelpCircle },
- // { name: "Manage Admin", href: "/admin/manage-admins", icon: Users },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+
+  // 🔥 AUTO RESPONSIVE STATE
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsOpen(true); // desktop
+      } else {
+        setIsOpen(false); // mobile
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <aside
@@ -31,7 +40,6 @@ export default function Sidebar() {
         bg-white border-b md:border-b-0 md:border-r border-blue-100 
         shadow-sm flex flex-col md:justify-between p-4 
 
-        /* 🔥 FIX PERFORMANCE */
         transition-[width] duration-300 ease-in-out
         will-change-[width]
       `}
@@ -66,11 +74,8 @@ export default function Sidebar() {
         <nav
           className={`
             flex flex-col space-y-2 overflow-hidden
-
             transition-[max-height,opacity] duration-300 ease-in-out
-
             ${isOpen ? "max-h-60 opacity-100 mt-4" : "max-h-0 opacity-0"}
-
             md:max-h-none md:opacity-100 md:mt-0 md:transition-none
           `}
         >
