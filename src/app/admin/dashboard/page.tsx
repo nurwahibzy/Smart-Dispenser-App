@@ -3,10 +3,10 @@
 import { useRef, useState, useMemo, useEffect } from "react";
 
 import WaterLevelSection from "@/features/water/components/water-level-section";
-import TdsCard from "@/components/cards/tds-card";
-import DailyUsageCard from "@/components/cards/daily-usage-card";
-import ValveControl from "@/components/cards/valve-control-card";
-import VolumeControl from "@/components/cards/volume-controle-card";
+import TdsCard from "@/features/water/components/tds-card";
+import DailyUsageCard from "@/features/water/components/daily-usage-card";
+import ValveControl from "@/features/water/components/valve-control-card";
+import VolumeControl from "@/features/water/components/volume-controle-card";
 import { ConsumptionTrend } from "@/features/transaction/components/consumption-trends-chart";
 import { HistoryTable } from "@/features/transaction/components/history-table";
 
