@@ -164,16 +164,16 @@ export function HistoryTable() {
                 { label: "Time", key: "time" },
                 { label: "Event" },
                 { label: "Amount", key: "amount" },
-                { label: "TDS", key: "tds" },
-                { label: "Duration" },
-                { label: "Status" },
+                { label: "TDS", key: "tds", className: "hidden md:table-cell" },
+                { label: "Duration", className: "hidden md:table-cell" },
+                { label: "Status", className: "hidden md:table-cell" },
               ].map((col) => (
                 <th
                   key={col.label}
                   onClick={() => col.key && handleSort(col.key as SortKey)}
                   className={`px-4 py-3 text-xs text-slate-500 uppercase tracking-wide select-none ${
                     col.key ? "cursor-pointer hover:text-blue-600" : ""
-                  }`}
+                  } ${col.className || ""}`}
                 >
                   <span className="inline-flex items-center">
                     {col.label}
@@ -197,13 +197,13 @@ export function HistoryTable() {
                   key={row.id}
                   className={`border-t border-slate-50 hover:bg-blue-50/30 transition-colors ${
                     i % 2 === 0 ? "" : "bg-slate-50/30"
-                  }`}
+                  } min-h-[56px]`}
                 >
-                  <td className="px-4 py-3 text-sm text-slate-700">
+                  <td className="px-4 py-3 text-sm text-slate-700 whitespace-nowrap">
                     {row.date}
                   </td>
 
-                  <td className="px-4 py-3 text-sm text-slate-500">
+                  <td className="px-4 py-3 text-sm text-slate-500 whitespace-nowrap">
                     {row.time}
                   </td>
 
@@ -231,7 +231,7 @@ export function HistoryTable() {
                     </span>
                   </td>
 
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3 hidden md:table-cell">
                     <span
                       className={`text-sm font-semibold ${
                         row.tds < 150 ? "text-blue-600" : "text-amber-600"
@@ -242,11 +242,11 @@ export function HistoryTable() {
                     </span>
                   </td>
 
-                  <td className="px-4 py-3 text-sm text-slate-500">
+                  <td className="px-4 py-3 text-sm text-slate-500 hidden md:table-cell">
                     {row.duration}
                   </td>
 
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3 hidden md:table-cell">
                     <span
                       className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${
                         row.status === "Success"
