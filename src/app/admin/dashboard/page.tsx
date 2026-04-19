@@ -32,7 +32,7 @@ export default function DashboardPage() {
   const [dispensingProgress, setDispensingProgress] = useState(0);
   const [mode, setMode] = useState<"idle" | "manual" | "auto">("idle");
 
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const progressRef = useRef(0);
 
   const chartData = useMemo(() => {
@@ -42,8 +42,7 @@ export default function DashboardPage() {
   const [showChart, setShowChart] = useState(true);
 
   useEffect(() => {
-    setShowChart(false);
-    const t = setTimeout(() => setShowChart(true), 250);
+    const t = setTimeout(() => setShowChart(true), 0);
     return () => clearTimeout(t);
   }, []);
 
