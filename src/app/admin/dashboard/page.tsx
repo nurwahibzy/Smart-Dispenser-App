@@ -6,7 +6,7 @@ import WaterLevelSection from "@/features/water/components/water-level-section";
 import TdsCard from "@/features/water/components/tds-card";
 import DailyUsageCard from "@/features/water/components/daily-usage-card";
 import ValveControl from "@/features/water/components/valve-control-card";
-import VolumeControl from "@/features/water/components/volume-controle-card";
+import VolumeControl from "@/features/water/components/volume-control-card";
 import { ConsumptionTrend } from "@/features/transaction/components/consumption-trends-chart";
 import { HistoryTable } from "@/features/transaction/components/history-table";
 
@@ -18,7 +18,7 @@ import { toggleValveSimulation } from "@/features/device/application/valve.simul
 import {
   startAutoDispense,
   stopAutoDispense,
-} from "@/features/device/application/dispense.controller";
+} from "@/features/device/application/dispense.simulation";
 
 export default function DashboardPage() {
   const { data, loading } = useDeviceData();
@@ -29,27 +29,23 @@ export default function DashboardPage() {
   >(null);
 
   const [customVolume, setCustomVolume] = useState("");
-  const [isDispensing, setIsDispensing] = useState(false);
   const [dispensingProgress, setDispensingProgress] = useState(0);
   const [mode, setMode] = useState<"idle" | "manual" | "auto">("idle");
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef(0);
 
-  // 🔥 MEMO DATA
   const chartData = useMemo(() => {
     return groupTransactionsByDay(transactions || []);
   }, [transactions]);
 
-  // 🔥 FREEZE CHART (pakai state lokal pengganti props)
   const [showChart, setShowChart] = useState(true);
 
   useEffect(() => {
     setShowChart(false);
     const t = setTimeout(() => setShowChart(true), 250);
-
     return () => clearTimeout(t);
-  }, []); // ⬅️ tidak tergantung props lagi
+  }, []);
 
   if (loading || trxLoading) {
     return (
@@ -60,62 +56,78 @@ export default function DashboardPage() {
   }
 
   const sensors = data?.sensors;
-  const status = data?.status;
 
   const { dailyUsage, totalDispenses } = calculateDailyUsage(transactions);
 
+  // DISPENSE
   const handleDispense = () => {
     if (!selectedVolume) return;
 
+    // MANUAL MODE
     if (selectedVolume === "continuous") {
       const nextState = mode !== "manual";
 
       setMode(nextState ? "manual" : "idle");
 
       toggleValveSimulation({
-        currentState: status?.valveOpen || false,
+        currentState: mode === "manual",
         tds: sensors?.tds || 0,
       });
 
       return;
     }
 
+    // AUTO MODE
+    setMode("auto");
+
+    // buka valve
+    toggleValveSimulation({
+      currentState: false,
+      tds: sensors?.tds || 0,
+    });
+
     startAutoDispense({
       selectedVolume,
       tds: sensors?.tds || 0,
       setMode,
-      setIsDispensing,
       setProgress: setDispensingProgress,
       intervalRef,
       progressRef,
+      onComplete: () => {
+        // tutup valve setelah selesai
+        toggleValveSimulation({
+          currentState: true,
+          tds: sensors?.tds || 0,
+        });
+      },
     });
   };
 
+  // STOP
   const handleStop = () => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
 
-    if (mode === "auto" && typeof selectedVolume === "number") {
+    if (mode === "auto") {
       stopAutoDispense({
-        selectedVolume,
+        selectedVolume: Number(selectedVolume),
         tds: sensors?.tds || 0,
         progressRef,
         setMode,
-        setIsDispensing,
         setProgress: setDispensingProgress,
       });
     }
 
-    if (mode === "manual") {
+    // tutup valve
+    if (mode === "manual" || mode === "auto") {
       toggleValveSimulation({
-        currentState: status?.valveOpen || false,
+        currentState: true,
         tds: sensors?.tds || 0,
       });
     }
 
-    setIsDispensing(false);
     setDispensingProgress(0);
     setMode("idle");
   };
@@ -132,18 +144,9 @@ export default function DashboardPage() {
         <div className="flex flex-col gap-4 h-full">
           <TdsCard tds={sensors?.tds || 0} />
 
+          {/* FIX UTAMA DI SINI */}
           <ValveControl
-            isOpen={status?.valveOpen || false}
-            onToggle={() => {
-              if (mode === "auto") return;
-
-              toggleValveSimulation({
-                currentState: status?.valveOpen || false,
-                tds: sensors?.tds || 0,
-              });
-
-              setMode(status?.valveOpen ? "idle" : "manual");
-            }}
+            isOpen={mode === "manual" || mode === "auto"}
             isDispensing={mode !== "idle"}
             className="flex-1"
           />
