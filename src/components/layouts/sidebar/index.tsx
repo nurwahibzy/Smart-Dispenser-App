@@ -5,16 +5,19 @@ import { usePathname } from "next/navigation";
 import { LayoutDashboard, User, HelpCircle, LogOut, Menu } from "lucide-react";
 import { useState, useEffect } from "react";
 import { signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 const menuItems = [
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
   { name: "Profile", href: "/admin/profile", icon: User },
   { name: "Helpdesk", href: "/admin/helpdesk", icon: HelpCircle },
+  { name: "Manage Admin", href: "/admin/manage-admins", icon: User },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const { data: session } = useSession();
 
   // AUTO RESPONSIVE STATE
   useEffect(() => {
@@ -86,15 +89,22 @@ export default function Sidebar() {
             md:max-h-none md:opacity-100 md:mt-0 md:transition-none
           `}
         >
-          {menuItems.map((item) => {
-            const isActive = pathname === item.href;
-            const Icon = item.icon;
-
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`
+          {" "}
+          {menuItems
+            .filter((item) => {
+              if (item.href === "/admin/manage-admins") {
+                return session?.user?.role === "super admin";
+              }
+              return true;
+            })
+            .map((item) => {
+              const isActive = pathname === item.href;
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`
                   flex items-center 
                   ${isOpen ? "justify-start" : "justify-center"}
                   gap-3 px-3 py-3 rounded-xl transition-colors duration-200
@@ -104,20 +114,20 @@ export default function Sidebar() {
                       : "text-gray-600 hover:bg-blue-50 hover:text-blue-600"
                   }
                 `}
-              >
-                <Icon size={20} />
+                >
+                  <Icon size={20} />
 
-                <span
-                  className={`
+                  <span
+                    className={`
                     inline transition-opacity duration-200
                     ${isOpen ? "md:opacity-100" : "md:opacity-0"}
                   `}
-                >
-                  {item.name}
-                </span>
-              </Link>
-            );
-          })}
+                  >
+                    {item.name}
+                  </span>
+                </Link>
+              );
+            })}
         </nav>
       </div>
 

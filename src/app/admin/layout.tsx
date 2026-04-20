@@ -6,6 +6,7 @@ import NavbarAdmin from "@/components/layouts/navbar/navbar-admin";
 import DeviceStatusBar from "@/components/layouts/navbar/device-status-bar";
 import { usePathname } from "next/navigation";
 import { SessionProvider } from "next-auth/react";
+import { Toaster } from "sonner";
 
 const DISABLE_SIDEBAR = ["/admin/login"];
 const DISABLE_NAVBAR = ["/admin/login"];
@@ -43,6 +44,8 @@ export default function AdminLayout({
               DeviceStatusBar={DeviceStatusBar}
             />
           )}
+
+          <Toaster position="top-right" richColors />
 
           <main className="flex-1 bg-gray-50 px-3 py-4 sm:px-4 md:px-6">
             {children}
