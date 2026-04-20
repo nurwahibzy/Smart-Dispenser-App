@@ -18,16 +18,24 @@ export default function StatusDropdown({
 }: Props) {
   const [open, setOpen] = useState(false);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
+
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null); 
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (buttonRef.current && !buttonRef.current.contains(e.target as Node)) {
+      if (
+        buttonRef.current &&
+        !buttonRef.current.contains(e.target as Node) &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
         setOpen(false);
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+
+    document.addEventListener("click", handleClickOutside); 
+    return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
   function handleOpen(e: React.MouseEvent) {
@@ -41,6 +49,7 @@ export default function StatusDropdown({
         left: rect.left,
       });
     }
+
     setOpen((prev) => !prev);
   }
 
@@ -56,7 +65,11 @@ export default function StatusDropdown({
         disabled={disabled || loading}
         className={`inline-flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-full transition
           ${activeStyle}
-          ${disabled || loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:opacity-80"}`}
+          ${
+            disabled || loading
+              ? "opacity-50 cursor-not-allowed"
+              : "cursor-pointer hover:opacity-80"
+          }`}
       >
         {loading ? (
           <span className="animate-pulse">Memuat...</span>
@@ -66,7 +79,9 @@ export default function StatusDropdown({
             {!disabled && (
               <ChevronDown
                 size={12}
-                className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+                className={`transition-transform duration-200 ${
+                  open ? "rotate-180" : ""
+                }`}
               />
             )}
           </>
@@ -75,11 +90,11 @@ export default function StatusDropdown({
 
       {open && !disabled && (
         <div
+          ref={dropdownRef} 
           style={{ top: dropdownPos.top, left: dropdownPos.left }}
           className="fixed w-28 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden z-[9999]"
         >
           <button
-            onMouseDown={(e) => e.stopPropagation()}
             onClick={(e) => {
               e.stopPropagation();
               onChange(true);
@@ -89,12 +104,12 @@ export default function StatusDropdown({
               ${status ? "bg-green-50 font-medium" : ""}`}
           >
             {status && (
-              <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
+              <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
             )}
             Aktif
           </button>
+
           <button
-            onMouseDown={(e) => e.stopPropagation()}
             onClick={(e) => {
               e.stopPropagation();
               onChange(false);
@@ -104,7 +119,7 @@ export default function StatusDropdown({
               ${!status ? "bg-red-50 font-medium" : ""}`}
           >
             {!status && (
-              <span className="w-1.5 h-1.5 rounded-full bg-red-400 inline-block" />
+              <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
             )}
             Nonaktif
           </button>
