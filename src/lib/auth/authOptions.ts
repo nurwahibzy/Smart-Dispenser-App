@@ -38,7 +38,7 @@ export const authOptions: NextAuthOptions = {
           userData.password,
         );
         if (!isValid) return null;
-        if (userData.role !== "admin") return null;
+        if (userData.role !== "admin" && userData.role !== "super admin") return null;
 
         return {
           id: snapshot.docs[0].id,

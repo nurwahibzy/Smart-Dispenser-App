@@ -7,7 +7,7 @@ export default withAuth({
 
       if (!token) return false;
 
-      return token.role === "admin";
+      return token.role === "admin" || token.role === "super admin";
     },
   },
   pages: {
