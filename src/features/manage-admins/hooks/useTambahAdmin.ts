@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { manageAdminService } from "../service/manageAdminService";
 import { TambahAdmin } from "@/types/manage-admins";
+import { toast } from "sonner";
 
 export function useTambahAdmin(onSukses?: () => void) {
   const [loading, setLoading] = useState(false);
@@ -23,13 +24,16 @@ export function useTambahAdmin(onSukses?: () => void) {
 
     try {
       await manageAdminService.tambah(data);
+      toast.success("Admin berhasil ditambahkan");
       onSukses?.();
     } catch (err) {
       const error = err as Error;
       if (error.message === "Email sudah digunakan") {
         setError("Email sudah digunakan.");
+        //toast.error("Email sudah digunakan");
       } else {
         setError("Gagal menambah admin.");
+         toast.error("Gagal menambah admin");
       }
     } finally {
       setLoading(false);

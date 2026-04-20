@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { manageAdminService } from "../service/manageAdminService";
+import { toast } from "sonner";
 
 export function useEditAdmin(onSukses?: () => void) {
   const [loading, setLoading] = useState(false);
@@ -18,9 +19,11 @@ export function useEditAdmin(onSukses?: () => void) {
 
     try {
       await manageAdminService.editNama(uid, { name });
+      toast.success("Data admin berhasil diperbarui");
       onSukses?.();
     } catch (err) {
       setError("Gagal menyimpan perubahan.");
+      toast.error("Gagal menyimpan perubahan");
     } finally {
       setLoading(false);
     }
