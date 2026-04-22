@@ -13,7 +13,7 @@ export function useLogin() {
 
   const callbackUrl = searchParams.get("callbackUrl") || "/admin/dashboard";
 
-  async function login(email: string, password: string) {
+  async function login(email: string, password: string, rememberMe: boolean) {
     setError("");
     setLoading(true);
 
@@ -21,6 +21,7 @@ export function useLogin() {
       const res = await signIn("credentials", {
         email,
         password,
+        rememberMe: rememberMe ? "true" : "false",
         redirect: false, 
       });
 

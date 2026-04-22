@@ -8,8 +8,21 @@ import {comparePassword} from "@/lib/utils/hash";
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60,
   },
   secret: process.env.NEXTAUTH_SECRET,
+
+  cookies: {
+    sessionToken: {
+      name: "next-auth.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
+  },
 
   providers: [
     CredentialsProvider({
@@ -17,6 +30,7 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        rememberMe: { label: "Remember Me", type: "text" },
       },
 
       async authorize(credentials) {
@@ -38,13 +52,15 @@ export const authOptions: NextAuthOptions = {
           userData.password,
         );
         if (!isValid) return null;
-        if (userData.role !== "admin" && userData.role !== "super admin") return null;
+        if (userData.role !== "admin" && userData.role !== "super admin")
+          return null;
 
         return {
           id: snapshot.docs[0].id,
           email: userData.email,
           name: userData.name,
           role: userData.role,
+          rememberMe: credentials.rememberMe === "true",
         };
       },
     }),
@@ -65,6 +81,7 @@ export const authOptions: NextAuthOptions = {
         token.email = user.email;
         token.name = user.name;
         token.role = user.role;
+        token.rememberMe = user.rememberMe;
       }
       return token;
     },
@@ -84,3 +101,5 @@ export const authOptions: NextAuthOptions = {
     signIn: "/admin/login",
   },
 };
+
+export default authOptions;

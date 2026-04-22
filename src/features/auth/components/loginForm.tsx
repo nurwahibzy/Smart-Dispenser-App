@@ -8,13 +8,14 @@ import { useRouter } from "next/navigation";
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const { login, loading, error } = useLogin();
   const router = useRouter();
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!email || !password) return;
-    login(email, password);
+    login(email, password, rememberMe);
   }
 
   return (
@@ -56,6 +57,23 @@ export default function LoginForm() {
           placeholder="••••••••"
           className="border border-gray-200 rounded-lg px-4 py-2.5 text-sm placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
         />
+      </div>
+
+      {/* Remember Me */}
+      <div className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          id="rememberMe"
+          checked={rememberMe}
+          onChange={(e) => setRememberMe(e.target.checked)}
+          className="w-4 h-4 rounded border-gray-300 text-blue-600 cursor-pointer accent-blue-600"
+        />
+        <label
+          htmlFor="rememberMe"
+          className="text-sm text-gray-600 cursor-pointer select-none"
+        >
+          Remember Me
+        </label>
       </div>
 
       {/* Error */}
