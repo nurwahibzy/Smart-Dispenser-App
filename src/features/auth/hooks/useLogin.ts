@@ -22,12 +22,19 @@ export function useLogin() {
         email,
         password,
         rememberMe: rememberMe ? "true" : "false",
-        redirect: false, 
+        redirect: false,
       });
 
       if (res?.error) {
         setError("Email atau password salah.");
         return;
+      }
+
+      //digunakan untuk menyimpan informasi rememberMe di sisi klien agar bisa digunakan untuk mengatur cookie di server
+      if (!rememberMe) {
+        sessionStorage.setItem("session-only", "true");
+      } else {
+        sessionStorage.removeItem("session-only");
       }
 
       router.push(callbackUrl);

@@ -1,23 +1,48 @@
 import { withAuth } from "next-auth/middleware";
+import { NextResponse } from "next/server";
 
-export default withAuth({
-  callbacks: {
-    authorized: ({ token, req }) => {
-      if (!token) return false;
+const SESSION_ONLY_DURATION = 24 * 60 * 60; // 1 hari
 
-      const pathname = req.nextUrl.pathname;
+export default withAuth(
+  function middleware(req) {
+    const token = req.nextauth.token;
+    const now = Math.floor(Date.now() / 1000);
 
-      if (pathname.startsWith("/admin/manage-admins")) {
-        return token.role === "super admin";
+    // Jika tidak remember me, cek expiry berdasarkan loginTime
+    if (token?.rememberMe === false) {
+      const loginTime = (token.loginTime as number) || (token.iat as number);
+      const elapsed = now - loginTime;
+
+      // console.log(
+      //   `[Middleware] Elapsed: ${elapsed}s / ${SESSION_ONLY_DURATION}s`,
+      // );
+
+      if (elapsed > SESSION_ONLY_DURATION) {
+        //console.log("[Middleware] Session expired, redirecting to login");
+        const res = NextResponse.redirect(new URL("/admin/login", req.url));
+        res.cookies.delete("next-auth.session-token");
+        return res;
       }
+    }
 
-      return token.role === "admin" || token.role === "super admin";
+    return NextResponse.next();
+  },
+  {
+    callbacks: {
+      authorized: ({ token, req }) => {
+        if (!token) return false;
+        const pathname = req.nextUrl.pathname;
+        if (pathname.startsWith("/admin/manage-admins")) {
+          return token.role === "super admin";
+        }
+        return token.role === "admin" || token.role === "super admin";
+      },
+    },
+    pages: {
+      signIn: "/admin/login",
     },
   },
-  pages: {
-    signIn: "/admin/login",
-  },
-});
+);
 
 export const config = {
   matcher: ["/admin/:path*"],

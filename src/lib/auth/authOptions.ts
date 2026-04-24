@@ -1,28 +1,14 @@
-import { NextAuthOptions, Account, Session, User } from "next-auth";
-import { JWT } from "next-auth/jwt";
+import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase/client";
-import {comparePassword} from "@/lib/utils/hash";
+import { comparePassword } from "@/lib/utils/hash";
 
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60,
   },
   secret: process.env.NEXTAUTH_SECRET,
-
-  cookies: {
-    sessionToken: {
-      name: "next-auth.session-token",
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-      },
-    },
-  },
 
   providers: [
     CredentialsProvider({
@@ -67,32 +53,40 @@ export const authOptions: NextAuthOptions = {
   ],
 
   callbacks: {
-    async jwt({
-      token,
-      user,
-      account,
-    }: {
-      token: JWT;
-      user?: User;
-      account?: Account | null;
-    }) {
-      if (account?.provider === "credentials" && user) {
+    async jwt({ token, user }) {
+      if (user) {
+        // console.log("USER REMEMBER:", user.rememberMe);
+
         token.id = user.id;
-        token.email = user.email;
-        token.name = user.name;
         token.role = user.role;
         token.rememberMe = user.rememberMe;
+
+        const now = Math.floor(Date.now() / 1000);
+
+        token.exp = token.rememberMe
+          ? now + 30 * 24 * 60 * 60 // 30 hari
+          : now + 24 * 60 * 60; // 1 hari
+
+        token.loginTime = now;
       }
+
+     // console.log("TOKEN REMEMBER:", token.rememberMe);
       return token;
     },
 
-    async session({ session, token }: { session: Session; token: JWT }) {
-      if (token.email && session.user) {
+    async session({ session, token }) {
+      // console.log("SESSION TOKEN REMEMBER:", token.rememberMe);
+
+      if (session.user) {
         session.user.id = token.id as string;
-        session.user.email = token.email;
-        session.user.name = token.name as string;
         session.user.role = token.role;
       }
+
+      session.rememberMe = token.rememberMe;
+      if (token.exp) {
+        session.expires = new Date((token.exp as number) * 1000).toISOString();
+      }
+
       return session;
     },
   },

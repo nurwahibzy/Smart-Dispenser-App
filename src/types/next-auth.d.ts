@@ -8,6 +8,7 @@ declare module "next-auth" {
   }
 
   interface Session {
+    rememberMe?: boolean;
     user: {
       id?: string;
       email?: string | null;
@@ -22,5 +23,6 @@ declare module "next-auth/jwt" {
     id?: string;
     role?: string;
     rememberMe?: boolean;
+    loginTime?: number;
   }
 }
