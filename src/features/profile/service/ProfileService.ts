@@ -49,6 +49,11 @@ export const profileService = {
 
     const cocok = await bcrypt.compare(passwordLama, user.password);
     if (!cocok) throw new Error("Password lama salah");
+    
+    const isSame = await bcrypt.compare(passwordBaru, user.password);
+    if (isSame) {
+      throw new Error("Password baru tidak boleh sama dengan password lama");
+    }
 
     const hashed = await bcrypt.hash(passwordBaru, 10);
 
