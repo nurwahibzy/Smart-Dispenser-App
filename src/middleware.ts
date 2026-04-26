@@ -30,16 +30,23 @@ export default withAuth(
   {
     callbacks: {
       authorized: ({ token, req }) => {
-        if (!token) return false;
-        const pathname = req.nextUrl.pathname;
-        if (pathname.startsWith("/admin/manage-admins")) {
-          return token.role === "super admin";
-        }
-        return token.role === "admin" || token.role === "super admin";
-      },
-    },
-    pages: {
-      signIn: "/admin/login",
+  const pathname = req.nextUrl.pathname;
+  if (
+    pathname.startsWith("/admin/login") ||
+    pathname.startsWith("/admin/forgot-password") ||
+    pathname.startsWith("/admin/reset-password")
+  ) {
+    return true;
+  }
+
+  if (!token) return false;
+
+  if (pathname.startsWith("/admin/manage-admins")) {
+    return token.role === "super admin";
+  }
+
+  return token.role === "admin" || token.role === "super admin";
+},
     },
   },
 );

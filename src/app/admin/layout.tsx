@@ -9,8 +9,8 @@ import { SessionProvider } from "next-auth/react";
 import { Toaster } from "sonner";
 import { SessionGuard } from "@/features/auth/components/SessionGuard";
 
-const DISABLE_SIDEBAR = ["/admin/login"];
-const DISABLE_NAVBAR = ["/admin/login"];
+const DISABLE_SIDEBAR = ["/admin/login", "/admin/forgot-password", "/admin/reset-password"];
+const DISABLE_NAVBAR = ["/admin/login", "/admin/forgot-password", "/admin/reset-password"];
 
 export default function AdminLayout({
   children,
