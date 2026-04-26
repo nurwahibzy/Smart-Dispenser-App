@@ -11,6 +11,7 @@ export interface AdminData {
   photoURL?: string;
   resetToken?: string;
   resetTokenExpiry?: Timestamp | null;
+  lastResetRequest?: Timestamp;
 }
 
 export interface TambahAdmin {

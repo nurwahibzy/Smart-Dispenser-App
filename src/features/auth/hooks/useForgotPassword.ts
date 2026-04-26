@@ -6,13 +6,14 @@ interface UseForgotPasswordReturn {
   loading: boolean;
   error: string;
   message: string;
-  clearMessages: () => void;
+  cooldown: number;
 }
 
 export function useForgotPassword(): UseForgotPasswordReturn {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [cooldown, setCooldown] = useState(0);
 
   async function requestReset(email: string): Promise<boolean> {
     setError("");
@@ -22,20 +23,35 @@ export function useForgotPassword(): UseForgotPasswordReturn {
     try {
       const result = await passwordResetService.requestReset({ email });
       setMessage(result.message);
+
+      // ⏱️ start cooldown 60 detik
+      setCooldown(60);
+      const interval = setInterval(() => {
+        setCooldown((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
       return true;
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "Terjadi kesalahan";
+
       setError(errorMessage);
+
+      // kalau kena limit (429)
+      if (errorMessage.toLowerCase().includes("terlalu banyak")) {
+        setCooldown(60);
+      }
+
       return false;
     } finally {
       setLoading(false);
     }
-  }
-
-  function clearMessages() {
-    setError("");
-    setMessage("");
   }
 
   return {
@@ -43,6 +59,6 @@ export function useForgotPassword(): UseForgotPasswordReturn {
     loading,
     error,
     message,
-    clearMessages,
+    cooldown,
   };
 }

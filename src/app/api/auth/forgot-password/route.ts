@@ -5,11 +5,14 @@ import {
   where,
   getDocs,
   updateDoc,
+  deleteField,
+  Timestamp,
+  QueryDocumentSnapshot,
+  DocumentData,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase/client";
 import { generateResetToken, hashToken } from "@/lib/utils/token";
 import { sendPasswordResetEmail } from "@/lib/auth/emailService";
-import { Timestamp } from "firebase/firestore";
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,22 +22,41 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Email harus diisi" }, { status: 400 });
     }
 
+    const now = new Date();
     const usersRef = collection(db, "users");
     const q = query(usersRef, where("email", "==", email));
     const snapshot = await getDocs(q);
 
     let shouldSendEmail = false;
-    let userDoc = null;
+    let userDoc: QueryDocumentSnapshot<DocumentData> | null = null;
 
     // Cek apakah user ada
     if (!snapshot.empty) {
       const doc = snapshot.docs[0];
       const userData = doc.data();
 
-      if (userData.role === "admin" || userData.role === "super admin") {
-        shouldSendEmail = true;
-        userDoc = doc;
+      if (userData.role !== "admin" && userData.role !== "super admin") {
+        return NextResponse.json({
+          message:
+            "Jika email terdaftar dan memiliki akses, link reset password telah dikirim",
+        });
       }
+
+      if (userData.lastResetRequest) {
+        const lastRequest = userData.lastResetRequest.toDate();
+        const diff = (now.getTime() - lastRequest.getTime()) / 1000;
+
+        if (diff < 60) {
+          return NextResponse.json(
+            { error: "Terlalu banyak permintaan. Coba lagi dalam 1 menit." },
+            { status: 429 },
+          );
+        }
+      }
+
+      shouldSendEmail = true;
+      userDoc = doc;
+
     }
 
     // generate token & kirim email kalau email ada
@@ -46,6 +68,7 @@ export async function POST(req: NextRequest) {
       await updateDoc(userDoc.ref, {
         resetToken: hashedToken,
         resetTokenExpiry: Timestamp.fromDate(resetTokenExpiry),
+        lastResetRequest: Timestamp.fromDate(now),
       });
 
       await sendPasswordResetEmail(email, resetToken);
