@@ -6,8 +6,11 @@ export interface AdminData {
   email: string;
   role: string;
   status: boolean;
-  createdAt: string | Timestamp;
-  updatedAt: string | Timestamp| null;
+  createdAt: Timestamp;
+  updatedAt?: Timestamp | null;
+  photoURL?: string;
+  resetToken?: string;
+  resetTokenExpiry?: Timestamp | null;
 }
 
 export interface TambahAdmin {
