@@ -5,7 +5,6 @@ import {
   where,
   getDocs,
   updateDoc,
-  deleteField,
   Timestamp,
   QueryDocumentSnapshot,
   DocumentData,

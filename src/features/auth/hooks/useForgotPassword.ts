@@ -24,7 +24,6 @@ export function useForgotPassword(): UseForgotPasswordReturn {
       const result = await passwordResetService.requestReset({ email });
       setMessage(result.message);
 
-      // ⏱️ start cooldown 60 detik
       setCooldown(60);
       const interval = setInterval(() => {
         setCooldown((prev) => {
@@ -43,8 +42,7 @@ export function useForgotPassword(): UseForgotPasswordReturn {
 
       setError(errorMessage);
 
-      // kalau kena limit (429)
-      if (errorMessage.toLowerCase().includes("terlalu banyak")) {
+      if (errorMessage.toLowerCase().includes("terlalu banyak request")) {
         setCooldown(60);
       }
 
