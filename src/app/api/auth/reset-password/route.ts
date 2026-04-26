@@ -5,11 +5,12 @@ import {
   where,
   getDocs,
   updateDoc,
-  deleteField,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase/client";
 import { hashToken } from "@/lib/utils/token";
 import { hashPassword } from "@/lib/utils/hash";
+import bcrypt from "bcryptjs";
+import { serverTimestamp } from "firebase/firestore";
 
 export async function POST(req: NextRequest) {
   try {
@@ -45,10 +46,25 @@ export async function POST(req: NextRequest) {
     const userDoc = snapshot.docs[0];
     const userData = userDoc.data();
 
-    const tokenExpiry = new Date(userData.resetTokenExpiry);
+    if (!userData.resetTokenExpiry) {
+      return NextResponse.json(
+        { error: "Token tidak valid." },
+        { status: 400 },
+      );
+    }
+
+    const tokenExpiry = userData.resetTokenExpiry.toDate();
     if (tokenExpiry < new Date()) {
       return NextResponse.json(
         { error: "Token sudah expired. Silakan request reset password lagi." },
+        { status: 400 },
+      );
+    }
+
+    const isSame = await bcrypt.compare(password, userData.password);
+    if (isSame) {
+      return NextResponse.json(
+        { error: "Password baru tidak boleh sama dengan password lama" },
         { status: 400 },
       );
     }
@@ -57,8 +73,9 @@ export async function POST(req: NextRequest) {
 
     await updateDoc(userDoc.ref, {
       password: hashedPassword,
-      resetToken: deleteField(),
-      resetTokenExpiry: deleteField(),
+      resetToken: null,
+      resetTokenExpiry: null,
+      updatedAt: serverTimestamp(),
     });
 
     return NextResponse.json({

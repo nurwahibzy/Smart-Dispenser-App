@@ -9,6 +9,7 @@ import {
 import { db } from "@/lib/firebase/client";
 import { generateResetToken, hashToken } from "@/lib/utils/token";
 import { sendPasswordResetEmail } from "@/lib/auth/emailService";
+import { Timestamp } from "firebase/firestore";
 
 export async function POST(req: NextRequest) {
   try {
@@ -44,7 +45,7 @@ export async function POST(req: NextRequest) {
 
       await updateDoc(userDoc.ref, {
         resetToken: hashedToken,
-        resetTokenExpiry: resetTokenExpiry.toISOString(),
+        resetTokenExpiry: Timestamp.fromDate(resetTokenExpiry),
       });
 
       await sendPasswordResetEmail(email, resetToken);

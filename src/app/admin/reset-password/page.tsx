@@ -1,19 +1,13 @@
 import { Suspense } from "react";
 import { ResetPasswordForm } from "@/features/auth/components/ResetPasswordForm";
 
-function ResetPasswordContainer({
+export default async function ResetPasswordPage({
   searchParams,
 }: {
-  searchParams: { token?: string };
+  searchParams: Promise<{ token?: string }>;
 }) {
-  return <ResetPasswordForm token={searchParams.token || null} />;
-}
+  const params = await searchParams;
 
-export default function ResetPasswordPage({
-  searchParams,
-}: {
-  searchParams: { token?: string };
-}) {
   return (
     <Suspense
       fallback={
@@ -22,7 +16,7 @@ export default function ResetPasswordPage({
         </div>
       }
     >
-      <ResetPasswordContainer searchParams={searchParams} />
+      <ResetPasswordForm token={params.token || null} />
     </Suspense>
   );
 }

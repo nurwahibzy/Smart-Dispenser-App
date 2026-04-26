@@ -7,9 +7,24 @@ import { useForgotPassword } from "@/features/auth/hooks/useForgotPassword";
 export function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
   const { requestReset, loading, error, message } = useForgotPassword();
+  const [emailError, setEmailError] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    setEmailError("");
+
+    if (!email) {
+      setEmailError("Email wajib diisi");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setEmailError("Format email tidak valid");
+      return;
+    }
+
     const success = await requestReset(email);
     if (success) {
       setEmail("");
@@ -37,13 +52,15 @@ export function ForgotPasswordForm() {
             <input
               id="email"
               type="email"
-              required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Email address"
               disabled={loading}
             />
+            {emailError && (
+              <p className="mt-1 text-xs text-red-500">{emailError}</p>
+            )}
           </div>
 
           {/* Error Message */}
