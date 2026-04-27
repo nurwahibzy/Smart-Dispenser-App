@@ -5,7 +5,7 @@ export interface AdminProfile {
   role: string;
   status: boolean;
   createdAt: string;
-  updatedAt: string;
+  updatedAt: string | null;
   photoURL?: string;
 }
 

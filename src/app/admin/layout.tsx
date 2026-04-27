@@ -7,9 +7,10 @@ import DeviceStatusBar from "@/components/layouts/navbar/device-status-bar";
 import { usePathname } from "next/navigation";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "sonner";
+import { SessionGuard } from "@/features/auth/components/SessionGuard";
 
-const DISABLE_SIDEBAR = ["/admin/login"];
-const DISABLE_NAVBAR = ["/admin/login"];
+const DISABLE_SIDEBAR = ["/admin/login", "/admin/forgot-password", "/admin/reset-password"];
+const DISABLE_NAVBAR = ["/admin/login", "/admin/forgot-password", "/admin/reset-password"];
 
 export default function AdminLayout({
   children,
@@ -30,6 +31,8 @@ export default function AdminLayout({
 
   return (
     <SessionProvider>
+      <SessionGuard />
+
       <div className="flex flex-col md:flex-row">
         {!hideSidebar && <Sidebar />}
 

@@ -13,7 +13,7 @@ export function useLogin() {
 
   const callbackUrl = searchParams.get("callbackUrl") || "/admin/dashboard";
 
-  async function login(email: string, password: string) {
+  async function login(email: string, password: string, rememberMe: boolean) {
     setError("");
     setLoading(true);
 
@@ -21,12 +21,20 @@ export function useLogin() {
       const res = await signIn("credentials", {
         email,
         password,
-        redirect: false, 
+        rememberMe: rememberMe ? "true" : "false",
+        redirect: false,
       });
 
       if (res?.error) {
         setError("Email atau password salah.");
         return;
+      }
+
+      //digunakan untuk menyimpan informasi rememberMe di sisi klien agar bisa digunakan untuk mengatur cookie di server
+      if (!rememberMe) {
+        sessionStorage.setItem("session-only", "true");
+      } else {
+        sessionStorage.removeItem("session-only");
       }
 
       router.push(callbackUrl);

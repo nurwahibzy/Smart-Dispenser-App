@@ -9,6 +9,7 @@ import {
   orderBy,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase/client";
+import { serverTimestamp } from "firebase/firestore";
 import bcrypt from "bcryptjs";
 import { AdminData, TambahAdmin, EditAdmin } from "@/types/manage-admins";
 
@@ -30,7 +31,6 @@ export const manageAdminService = {
     if (!cek.empty) throw new Error("Email sudah digunakan");
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
-    const now = new Date().toISOString();
 
     await addDoc(collection(db, "users"), {
       name: data.name,
@@ -38,7 +38,7 @@ export const manageAdminService = {
       password: hashedPassword,
       role: "admin",
       status: true,
-      createdAt: now,
+      createdAt: serverTimestamp(),
       updatedAt: null,
     });
   },
@@ -46,14 +46,14 @@ export const manageAdminService = {
   editNama: async (uid: string, data: EditAdmin): Promise<void> => {
     await updateDoc(doc(db, "users", uid), {
       name: data.name,
-      updatedAt: new Date().toISOString(),
+      updatedAt: serverTimestamp(),
     });
   },
 
   updateStatus: async (uid: string, newStatus: boolean): Promise<void> => {
     await updateDoc(doc(db, "users", uid), {
       status: newStatus,
-      updatedAt: new Date().toISOString(),
+      updatedAt: serverTimestamp(),
     });
   },
 };
