@@ -53,6 +53,7 @@ export default withAuth(
         return token.role === "admin" || token.role === "super admin";
       },
     },
+    secret: process.env.NEXTAUTH_SECRET,
   },
 );
 
