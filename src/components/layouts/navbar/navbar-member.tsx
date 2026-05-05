@@ -8,7 +8,11 @@ export default function NavbarMember() {
     <header className="bg-white border-b border-blue-100 sticky top-0 z-30 shadow-sm">
       <div className="px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
         <div>
-          <h1 className="text-base sm:text-lg font-bold text-blue-600">Smart Dispenser</h1>
+          <Link href="/">
+            <h1 className="text-base sm:text-lg font-bold text-blue-600">
+              Smart Dispenser
+            </h1>
+          </Link>
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
@@ -20,7 +24,7 @@ export default function NavbarMember() {
             href="/"
             className="bg-blue-600 text-white px-3 py-2 rounded-md text-xs sm:text-sm font-semibold hover:bg-blue-700 transition"
           >
-            Kembali Home
+            Home
           </Link>
         </div>
       </div>

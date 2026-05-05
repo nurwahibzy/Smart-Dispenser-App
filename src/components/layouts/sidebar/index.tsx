@@ -2,27 +2,45 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  User,
-  HelpCircle,
-  Users,
-  LogOut,
-  Menu,
-} from "lucide-react";
-import { useState } from "react";
+import { LayoutDashboard, User, HelpCircle, LogOut, Menu } from "lucide-react";
+import { useState, useEffect } from "react";
 import { signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 const menuItems = [
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
   { name: "Profile", href: "/admin/profile", icon: User },
   { name: "Helpdesk", href: "/admin/helpdesk", icon: HelpCircle },
- // { name: "Manage Admin", href: "/admin/manage-admins", icon: Users },
+  { name: "Manage Admin", href: "/admin/manage-admins", icon: User },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const { data: session } = useSession();
+
+  // AUTO RESPONSIVE STATE
+  useEffect(() => {
+    let isMounted = true;
+
+    const handleResize = () => {
+      if (!isMounted) return;
+
+      if (window.innerWidth >= 768) {
+        setIsOpen(true);
+      } else {
+        setIsOpen(false);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   return (
     <aside
@@ -32,7 +50,6 @@ export default function Sidebar() {
         bg-white border-b md:border-b-0 md:border-r border-blue-100 
         shadow-sm flex flex-col md:justify-between p-4 
 
-        /* 🔥 FIX PERFORMANCE */
         transition-[width] duration-300 ease-in-out
         will-change-[width]
       `}
@@ -47,9 +64,11 @@ export default function Sidebar() {
               ${isOpen ? "md:opacity-100 md:w-auto" : "md:opacity-0 md:w-0 md:overflow-hidden"}
             `}
           >
-            <h1 className="text-lg font-bold text-blue-600 whitespace-nowrap">
-              Smart Dispenser
-            </h1>
+            <Link href="/admin/dashboard">
+              <h1 className="text-lg font-bold text-blue-600 whitespace-nowrap">
+                Smart Dispenser
+              </h1>
+            </Link>
             <p className="text-xs text-gray-400 hidden md:block">Admin Panel</p>
           </div>
 
@@ -65,23 +84,27 @@ export default function Sidebar() {
         <nav
           className={`
             flex flex-col space-y-2 overflow-hidden
-
             transition-[max-height,opacity] duration-300 ease-in-out
-
             ${isOpen ? "max-h-60 opacity-100 mt-4" : "max-h-0 opacity-0"}
-
             md:max-h-none md:opacity-100 md:mt-0 md:transition-none
           `}
         >
-          {menuItems.map((item) => {
-            const isActive = pathname === item.href;
-            const Icon = item.icon;
-
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`
+          {" "}
+          {menuItems
+            .filter((item) => {
+              if (item.href === "/admin/manage-admins") {
+                return session?.user?.role === "super admin";
+              }
+              return true;
+            })
+            .map((item) => {
+              const isActive = pathname === item.href;
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`
                   flex items-center 
                   ${isOpen ? "justify-start" : "justify-center"}
                   gap-3 px-3 py-3 rounded-xl transition-colors duration-200
@@ -91,27 +114,27 @@ export default function Sidebar() {
                       : "text-gray-600 hover:bg-blue-50 hover:text-blue-600"
                   }
                 `}
-              >
-                <Icon size={20} />
+                >
+                  <Icon size={20} />
 
-                <span
-                  className={`
+                  <span
+                    className={`
                     inline transition-opacity duration-200
                     ${isOpen ? "md:opacity-100" : "md:opacity-0"}
                   `}
-                >
-                  {item.name}
-                </span>
-              </Link>
-            );
-          })}
+                  >
+                    {item.name}
+                  </span>
+                </Link>
+              );
+            })}
         </nav>
       </div>
 
       {/* BOTTOM */}
       <div className={`${!isOpen ? "hidden md:block" : ""}`}>
         <button
-          onClick={() => signOut({ callbackUrl: "/admin/login" })}
+          onClick={() => signOut({ callbackUrl: "/" })}
           className={`
             w-full flex items-center 
             ${isOpen ? "justify-start" : "justify-center"}

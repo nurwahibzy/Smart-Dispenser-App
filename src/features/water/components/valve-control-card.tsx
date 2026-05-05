@@ -4,14 +4,12 @@ import { Zap, Loader2 } from "lucide-react";
 
 type ValveControlProps = {
   isOpen: boolean;
-  onToggle: () => void;
   isDispensing?: boolean;
   className?: string;
 };
 
 export default function ValveControl({
   isOpen,
-  onToggle,
   isDispensing,
   className,
 }: ValveControlProps) {
@@ -32,20 +30,14 @@ export default function ValveControl({
           />
         </div>
 
-        {/* Toggle */}
-        <button
-          onClick={onToggle}
-          disabled={isDispensing}
-          className={`w-12 h-6 rounded-full relative transition-all duration-300 ${
-            isOpen ? "bg-blue-600" : "bg-slate-300"
-          } ${isDispensing ? "opacity-50 cursor-not-allowed" : ""}`}
+        {/* Status kecil di kanan (pengganti toggle) */}
+        <span
+          className={`text-xs font-medium px-2 py-1 rounded-full ${
+            isOpen ? "bg-blue-50 text-blue-600" : "bg-slate-100 text-slate-500"
+          }`}
         >
-          <span
-            className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-all duration-300 ${
-              isOpen ? "left-6" : "left-0.5"
-            }`}
-          />
-        </button>
+          {isOpen ? "OPEN" : "CLOSED"}
+        </span>
       </div>
 
       {/* Content */}
@@ -72,7 +64,7 @@ export default function ValveControl({
             ? "Dispensing in progress..."
             : isOpen
               ? "Water flow active"
-              : "Tap to open valve"}
+              : "Valve is closed"}
         </p>
       </div>
 

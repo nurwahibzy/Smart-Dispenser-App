@@ -2,22 +2,28 @@
 
 import { useState } from "react";
 import { useLogin } from "@/features/auth/hooks/useLogin";
+import Link from "next/link";
 import { Droplets } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const { login, loading, error } = useLogin();
+  const router = useRouter();
 
- function handleSubmit(e: React.FormEvent) {
-   e.preventDefault();
-   if (!email || !password) return;
-   login(email, password);
- }
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email || !password) return;
+    login(email, password, rememberMe);
+  }
 
   return (
-   <form onSubmit={handleSubmit} className="flex flex-col gap-5 w-full">
-      {/* Logo + Judul */}
+    <form onSubmit={handleSubmit} className="flex flex-col gap-5 w-full">
+      {/* Logo & Judul */}
       <div className="flex flex-col items-center gap-3 mb-2">
         <div className="w-11 h-11 bg-blue-600 rounded-xl flex items-center justify-center">
           <Droplets size={20} className="text-white" />
@@ -47,13 +53,50 @@ export default function LoginForm() {
         <label className="text-xs font-medium text-black-500 uppercase tracking-wide">
           Password
         </label>
+        <div className="relative">
+          <input
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            className="border border-gray-200 rounded-lg px-4 py-2.5 pr-10 text-sm placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all w-full"
+          />
+
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute inset-y-0 right-2 flex items-center text-gray-400 hover:text-gray-600"
+          >
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
+        </div>
+
+        {/* Forgot Password */}
+        <div className="flex justify-end mt-1">
+          <Link
+            href="/admin/forgot-password"
+            className="text-xs text-blue-600 hover:text-blue-500 transition-colors"
+          >
+            Lupa password?
+          </Link>
+        </div>
+      </div>
+
+      {/* Remember Me */}
+      <div className="flex items-center gap-2">
         <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="••••••••"
-          className="border border-gray-200 rounded-lg px-4 py-2.5 text-sm placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+          type="checkbox"
+          id="rememberMe"
+          checked={rememberMe}
+          onChange={(e) => setRememberMe(e.target.checked)}
+          className="w-4 h-4 rounded border-gray-300 text-blue-600 cursor-pointer accent-blue-600"
         />
+        <label
+          htmlFor="rememberMe"
+          className="text-sm text-gray-600 cursor-pointer select-none"
+        >
+          Ingat saya
+        </label>
       </div>
 
       {/* Error */}
@@ -64,13 +107,24 @@ export default function LoginForm() {
       )}
 
       {/* Tombol */}
-      <button
-        type="submit"
-        disabled={loading || !email || !password}
-        className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-      >
-        {loading ? "Memproses..." : "Masuk"}
-      </button>
+      <div className="justify-between items-center gap-4 flex flex-col sm:flex-row ">
+        <button
+          type="button"
+          onClick={() => {
+            router.back();
+          }}
+          className="text-blue-600 hover:text-blue-700 font-medium py-2.5 rounded-lg text-sm transition-colors"
+        >
+          Kembali
+        </button>
+        <button
+          type="submit"
+          disabled={loading || !email || !password}
+          className="p-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          {loading ? "Memproses..." : "Masuk"}
+        </button>
+      </div>
     </form>
   );
 }

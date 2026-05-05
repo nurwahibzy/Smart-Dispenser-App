@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useGantiPassword } from "../hooks/useGantiPassword";
+import { Eye, EyeOff } from "lucide-react";
 
 interface Props {
   onTutup: () => void;
@@ -12,6 +13,9 @@ export default function ModalGantiPassword({ onTutup, onSukses }: Props) {
   const [passwordLama, setPasswordLama] = useState("");
   const [passwordBaru, setPasswordBaru] = useState("");
   const [konfirmasi, setKonfirmasi] = useState("");
+  const [showPasswordLama, setShowPasswordLama] = useState(false);
+  const [showPasswordBaru, setShowPasswordBaru] = useState(false);
+  const [showKonfirmasi, setShowKonfirmasi] = useState(false);
   const { gantiPassword, loading, error } = useGantiPassword(onSukses);
 
   return (
@@ -27,29 +31,45 @@ export default function ModalGantiPassword({ onTutup, onSukses }: Props) {
               label: "Password Lama",
               value: passwordLama,
               set: setPasswordLama,
+              show: showPasswordLama,
+              toggle: () => setShowPasswordLama(!showPasswordLama),
             },
             {
               label: "Password Baru",
               value: passwordBaru,
               set: setPasswordBaru,
+              show: showPasswordBaru,
+              toggle: () => setShowPasswordBaru(!showPasswordBaru),
             },
             {
               label: "Konfirmasi Password Baru",
               value: konfirmasi,
               set: setKonfirmasi,
+              show: showKonfirmasi,
+              toggle: () => setShowKonfirmasi(!showKonfirmasi),
             },
-          ].map(({ label, value, set }) => (
+          ].map(({ label, value, set, show, toggle }) => (
             <div key={label} className="flex flex-col gap-1.5">
               <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">
                 {label}
               </label>
-              <input
-                type="password"
-                value={value}
-                onChange={(e) => set(e.target.value)}
-                placeholder="••••••••"
-                className="border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
+              <div className="relative">
+                <input
+                  type={show ? "text" : "password"}
+                  value={value}
+                  onChange={(e) => set(e.target.value)}
+                  placeholder="••••••••"
+                  className="border border-gray-200 rounded-lg px-4 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full"
+                />
+
+                <button
+                  type="button"
+                  onClick={toggle}
+                  className="absolute inset-y-0 right-2 flex items-center text-gray-400 hover:text-gray-600"
+                >
+                  {show ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
           ))}
         </div>

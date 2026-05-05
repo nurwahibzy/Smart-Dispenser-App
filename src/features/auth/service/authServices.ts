@@ -17,7 +17,7 @@ export const authService = {
       throw new Error("Email atau password salah");
     }
 
-    if (userData.role !== "admin") {
+    if (userData.role !== "admin" && userData.role !== "super admin") {
       throw new Error("Akses ditolak");
     }
 

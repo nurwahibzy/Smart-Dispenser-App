@@ -41,11 +41,16 @@ export function useGantiPassword(onSukses?: () => void) {
         passwordBaru,
       );
       setSukses(true);
-      onSukses?.(); // ← callback buat tutup modal
+      onSukses?.();
     } catch (err) {
       const error = err as Error;
+
       if (error.message === "Password lama salah") {
         setError("Password lama salah.");
+      } else if (
+        error.message === "Password baru tidak boleh sama dengan password lama"
+      ) {
+        setError("Password baru tidak boleh sama dengan password lama.");
       } else {
         setError("Gagal mengganti password.");
       }

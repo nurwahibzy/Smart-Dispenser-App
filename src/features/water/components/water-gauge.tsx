@@ -39,7 +39,7 @@ export function WaterGauge({ level, liters, capacity }: WaterGaugeProps) {
   const color = getColor(animatedLevel);
 
   // Wave animation offset
-  const waveHeight = 100 - animatedLevel;
+  // const waveHeight = 100 - animatedLevel;
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col h-full">

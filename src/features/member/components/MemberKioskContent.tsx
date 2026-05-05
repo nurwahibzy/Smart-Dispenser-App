@@ -2,6 +2,12 @@
 
 import { Droplets } from "lucide-react";
 import { useMemberKiosk } from "@/features/member/hooks/useMemberKiosk";
+import WaterLevelSection from "@/features/water/components/water-level-section";
+import TdsCard from "@/features/water/components/tds-card";
+import DailyUsageCard from "@/features/water/components/daily-usage-card";
+import { useDeviceData } from "@/lib/hooks/useDeviceData";
+import { useTransactionData } from "@/lib/hooks/useTransactionData";
+import { calculateDailyUsage } from "@/lib/utils/transaction";
 
 export default function MemberKioskContent() {
   const {
@@ -14,31 +20,37 @@ export default function MemberKioskContent() {
     finishState,
     progressPercent,
     progressText,
-    statusCard,
     guardReason,
   } = useMemberKiosk();
 
+  const { data: deviceData, loading: deviceLoading } = useDeviceData();
+  const { data: transactions, loading: transactionLoading } = useTransactionData();
+  const { dailyUsage, totalDispenses } = calculateDailyUsage(transactions || []);
+  const tds = deviceData?.sensors?.tds || 0;
+
   return (
     <div className="space-y-6 md:space-y-8">
-      <section className="bg-white rounded-2xl border border-blue-100 shadow-sm p-5 md:p-6">
-        <h2 className="text-2xl md:text-3xl font-black text-blue-600 tracking-tight">Status</h2>
-
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="rounded-xl border border-blue-100 p-4">
-            <p className="text-xs text-blue-400">Status</p>
-            <p className="mt-2 text-lg font-bold text-blue-600">
-              {statusCard.online ? "Online" : "Offline"}
-            </p>
-          </div>
-          <div className="rounded-xl border border-blue-100 p-4">
-            <p className="text-xs text-blue-400">Water Level</p>
-            <p className="mt-2 text-lg font-bold text-blue-600">{statusCard.waterLevel}%</p>
-          </div>
-          <div className="rounded-xl border border-blue-100 p-4">
-            <p className="text-xs text-blue-400">Kualitas Air</p>
-            <p className="mt-2 text-lg font-bold text-blue-600">{statusCard.waterQuality}</p>
+      <section className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:grid-rows-2 lg:items-start">
+        <div className="lg:row-span-2 lg:self-stretch">
+          <div className="h-full lg:[&>div]:p-4 lg:[&_svg]:h-[220px] lg:[&_svg]:w-[185px]">
+            <WaterLevelSection />
           </div>
         </div>
+
+        <div>
+          <TdsCard tds={tds} />
+        </div>
+
+        <div>
+          <DailyUsageCard
+            dailyUsage={dailyUsage}
+            totalDispenses={totalDispenses}
+          />
+        </div>
+
+        {(deviceLoading || transactionLoading) && (
+          <p className="col-span-full text-sm text-slate-400 px-1">Memuat data status...</p>
+        )}
       </section>
 
       <section className="bg-white rounded-2xl border border-blue-100 shadow-sm p-5 md:p-6">

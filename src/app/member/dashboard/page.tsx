@@ -7,7 +7,7 @@ export default function MemberDashboardPage() {
       <NavbarMember />
 
       <main className="px-4 sm:px-6 py-6 md:py-8">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <MemberKioskContent />
         </div>
       </main>

@@ -37,6 +37,8 @@ export default function UserHelpdeskForm() {
         category: "bug",
         description: "",
       });
+      // refresh halaman
+      window.location.reload();
     }
   };
 
