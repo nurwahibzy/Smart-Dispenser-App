@@ -1,7 +1,7 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
-const SESSION_ONLY_DURATION = 24 * 60 * 60; // 1 hari
+const SESSION_ONLY_DURATION = 24 * 60 * 60; 
 
 export default withAuth(
   function middleware(req) {
