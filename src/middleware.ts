@@ -20,7 +20,11 @@ export default withAuth(
       if (elapsed > SESSION_ONLY_DURATION) {
         //console.log("[Middleware] Session expired, redirecting to login");
         const res = NextResponse.redirect(new URL("/admin/login", req.url));
-        res.cookies.delete("next-auth.session-token");
+
+        res.cookies.delete("next-auth.session-token"); // dev
+        res.cookies.delete("__Secure-next-auth.session-token"); // prod https
+        res.cookies.delete("__Host-next-auth.session-token"); // prod https + secure
+
         return res;
       }
     }
@@ -30,23 +34,24 @@ export default withAuth(
   {
     callbacks: {
       authorized: ({ token, req }) => {
-  const pathname = req.nextUrl.pathname;
-  if (
-    pathname.startsWith("/admin/login") ||
-    pathname.startsWith("/admin/forgot-password") ||
-    pathname.startsWith("/admin/reset-password")
-  ) {
-    return true;
-  }
+        const pathname = req.nextUrl.pathname;
 
-  if (!token) return false;
+        if (
+          pathname.startsWith("/admin/login") ||
+          pathname.startsWith("/admin/forgot-password") ||
+          pathname.startsWith("/admin/reset-password")
+        ) {
+          return true;
+        }
 
-  if (pathname.startsWith("/admin/manage-admins")) {
-    return token.role === "super admin";
-  }
+        if (!token) return false;
 
-  return token.role === "admin" || token.role === "super admin";
-},
+        if (pathname.startsWith("/admin/manage-admins")) {
+          return token.role === "super admin";
+        }
+
+        return token.role === "admin" || token.role === "super admin";
+      },
     },
   },
 );
