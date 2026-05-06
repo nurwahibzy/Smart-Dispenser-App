@@ -1,14 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  updateDoc,
-  deleteField,
-  serverTimestamp
-} from "firebase/firestore";
-import { db } from "@/lib/firebase/client";
+import { FieldValue } from "firebase-admin/firestore";
+import { adminDb } from "@/lib/firebase/admin";
 import { hashToken } from "@/lib/utils/token";
 import { hashPassword } from "@/lib/utils/hash";
 import bcrypt from "bcryptjs";
@@ -24,7 +16,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (password.length < 6 ){
+    if (password.length < 6) {
       return NextResponse.json(
         { error: "Password minimal 6 karakter" },
         { status: 400 },
@@ -33,9 +25,10 @@ export async function POST(req: NextRequest) {
 
     const hashedToken = hashToken(token);
 
-    const usersRef = collection(db, "users");
-    const q = query(usersRef, where("resetToken", "==", hashedToken));
-    const snapshot = await getDocs(q);
+    const snapshot = await adminDb
+      .collection("users")
+      .where("resetToken", "==", hashedToken)
+      .get();
 
     if (snapshot.empty) {
       return NextResponse.json(
@@ -54,7 +47,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-   const tokenExpiry = userData.resetTokenExpiry.toDate();
+    const tokenExpiry = userData.resetTokenExpiry.toDate();
     if (tokenExpiry < new Date()) {
       return NextResponse.json(
         { error: "Token sudah expired. Silakan request reset password lagi." },
@@ -72,11 +65,11 @@ export async function POST(req: NextRequest) {
 
     const hashedPassword = await hashPassword(password);
 
-    await updateDoc(userDoc.ref, {
+    await userDoc.ref.update({
       password: hashedPassword,
-      resetToken: deleteField(),
-      resetTokenExpiry: deleteField(),
-      updatedAt: serverTimestamp(),
+      resetToken: FieldValue.delete(),
+      resetTokenExpiry: FieldValue.delete(),
+      updatedAt: FieldValue.serverTimestamp(),
     });
 
     return NextResponse.json({
