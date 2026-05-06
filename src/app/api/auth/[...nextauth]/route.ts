@@ -26,6 +26,11 @@ async function authHandler(
 
     const setCookieHeader = response.headers.get("set-cookie");
     if (setCookieHeader) {
+      const isProduction = process.env.NODE_ENV === "production";
+      const cookieName = isProduction
+        ? "__Secure-next-auth.session-token"
+        : "next-auth.session-token";
+
       const cookieValue = setCookieHeader.match(
         /next-auth\.session-token=([^;]+)/,
       )?.[1];
@@ -37,20 +42,18 @@ async function authHandler(
         });
 
         const rememberMe = decoded?.rememberMe === true;
-        const isProduction = process.env.NODE_ENV === "production";
-
         let newCookie: string;
 
         if (rememberMe) {
           const maxAge = 30 * 24 * 60 * 60;
-          newCookie = `next-auth.session-token=${cookieValue}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${
+          newCookie = `${cookieName}=${cookieValue}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${
             isProduction ? "; Secure" : ""
           }`;
           // console.log(
           //   `[Auth] Remember Me: TRUE, Max-Age: ${maxAge}s (30 hari)`,
           // );
         } else {
-          newCookie = `next-auth.session-token=${cookieValue}; Path=/; HttpOnly; SameSite=Lax${
+          newCookie = `${cookieName}=${cookieValue}; Path=/; HttpOnly; SameSite=Lax${
             isProduction ? "; Secure" : ""
           }`;
           //console.log(
