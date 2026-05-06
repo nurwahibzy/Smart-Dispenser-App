@@ -1,4 +1,3 @@
-// app/api/debug-token/route.ts
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
