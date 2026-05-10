@@ -1,11 +1,12 @@
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase/client";
+import { adminDb } from "@/lib/firebase/admin";
+import bcrypt from "bcryptjs";
 
 export const authService = {
   login: async (email: string, password: string) => {
-    const usersRef = collection(db, "users");
-    const q = query(usersRef, where("email", "==", email));
-    const snapshot = await getDocs(q);
+    const snapshot = await adminDb
+      .collection("users")
+      .where("email", "==", email)
+      .get();
 
     if (snapshot.empty) {
       throw new Error("Email atau password salah");
@@ -13,7 +14,8 @@ export const authService = {
 
     const userData = snapshot.docs[0].data();
 
-    if (userData.password !== password) {
+    const cocok = await bcrypt.compare(password, userData.password);
+    if (!cocok) {
       throw new Error("Email atau password salah");
     }
 
