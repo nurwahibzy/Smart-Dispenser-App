@@ -1,15 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  updateDoc,
-  Timestamp,
-  QueryDocumentSnapshot,
-  DocumentData,
-} from "firebase/firestore";
-import { db } from "@/lib/firebase/client";
+import { Timestamp } from "firebase-admin/firestore";
+import { adminDb } from "@/lib/firebase/admin";
 import { generateResetToken, hashToken } from "@/lib/utils/token";
 import { sendPasswordResetEmail } from "@/lib/auth/emailService";
 
@@ -22,14 +13,14 @@ export async function POST(req: NextRequest) {
     }
 
     const now = new Date();
-    const usersRef = collection(db, "users");
-    const q = query(usersRef, where("email", "==", email));
-    const snapshot = await getDocs(q);
+    const snapshot = await adminDb
+      .collection("users")
+      .where("email", "==", email)
+      .get();
 
     let shouldSendEmail = false;
-    let userDoc: QueryDocumentSnapshot<DocumentData> | null = null;
+    let userDoc: FirebaseFirestore.QueryDocumentSnapshot | null = null;
 
-    // Cek apakah user ada
     if (!snapshot.empty) {
       const doc = snapshot.docs[0];
       const userData = doc.data();
@@ -55,16 +46,14 @@ export async function POST(req: NextRequest) {
 
       shouldSendEmail = true;
       userDoc = doc;
-
     }
 
-    // generate token & kirim email kalau email ada
     if (shouldSendEmail && userDoc) {
       const resetToken = generateResetToken();
       const hashedToken = hashToken(resetToken);
-      const resetTokenExpiry = new Date(Date.now() + 15 * 60 * 1000); 
+      const resetTokenExpiry = new Date(Date.now() + 15 * 60 * 1000);
 
-      await updateDoc(userDoc.ref, {
+      await userDoc.ref.update({
         resetToken: hashedToken,
         resetTokenExpiry: Timestamp.fromDate(resetTokenExpiry),
         lastResetRequest: Timestamp.fromDate(now),
@@ -81,7 +70,6 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error("Error forgot password:", error);
-
     return NextResponse.json(
       { error: "Terjadi kesalahan. Silakan coba lagi." },
       { status: 500 },
