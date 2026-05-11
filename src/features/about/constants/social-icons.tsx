@@ -1,5 +1,5 @@
 import { Mail } from "lucide-react";
-import type { SocialType } from "@/features/about/type";
+import type { SocialType } from "@/features/about/types";
 
 export const socialIcons: Record<SocialType, React.ReactNode> = {
   github: (

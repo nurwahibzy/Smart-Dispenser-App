@@ -1,4 +1,4 @@
-import type { Developer } from "@/features/about/type";
+import type { Developer } from "@/features/about/types";
 import DevCard from "@/features/about/components/developer-card";
 
 interface TeamSectionProps {
@@ -11,8 +11,9 @@ export default function TeamSection({
   onOpenDev,
 }: TeamSectionProps) {
   return (
-    <section id="team" className="px-6 py-20 bg-white">
+    <section id="team" className="px-6 py-20 bg-slate-50">
       <div className="max-w-5xl mx-auto">
+        {/* Heading */}
         <div className="text-center mb-12">
           <span className="text-xs font-bold text-blue-500 uppercase tracking-widest">
             Tim Pengembang
@@ -26,9 +27,14 @@ export default function TeamSection({
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {/* Grid — photo-focused layout */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12 items-start">
           {developers.map((dev) => (
-            <DevCard key={dev.name} dev={dev} onOpen={() => onOpenDev(dev)} />
+            <DevCard
+              key={dev.name}
+              dev={dev}
+              onOpen={() => onOpenDev(dev)}
+            />
           ))}
         </div>
       </div>

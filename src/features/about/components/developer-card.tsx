@@ -1,5 +1,6 @@
 import { ExternalLink } from "lucide-react";
-import type { Developer } from "@/features/about/type";
+import type { Developer } from "@/features/about/types";
+import Image from "next/image";
 
 interface DevCardProps {
   dev: Developer;
@@ -7,69 +8,79 @@ interface DevCardProps {
 }
 
 export default function DevCard({ dev, onOpen }: DevCardProps) {
+  const isImage =
+    dev.avatar.startsWith("/") || dev.avatar.startsWith("http");
+
   return (
     <div
       onClick={onOpen}
-      className="group cursor-pointer bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+      className="group cursor-pointer flex flex-col items-center"
     >
-      {/* Banner */}
-      <div
-        className="h-24 relative"
-        style={{
-          background: `linear-gradient(135deg, ${dev.gradientFrom}, ${dev.gradientTo})`,
-        }}
-      >
+      {/* Large Avatar Photo */}
+      <div className="relative mb-4">
+        {/* Gradient glow ring behind avatar */}
         <div
-          className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle, white 1px, transparent 1px)",
-            backgroundSize: "20px 20px",
-          }}
-        />
-      </div>
-
-      {/* Avatar */}
-      <div className="flex justify-center -mt-9 relative z-10">
-        <div
-          className="w-[72px] h-[72px] rounded-2xl flex items-center justify-center text-white font-black text-xl border-4 border-white shadow-md"
+          className="absolute -inset-1.5 rounded-full opacity-0 blur-md
+                     group-hover:opacity-60 transition-opacity duration-500"
           style={{
             background: `linear-gradient(135deg, ${dev.gradientFrom}, ${dev.gradientTo})`,
           }}
+        />
+
+        <div
+          className="relative w-36 h-36 sm:w-40 sm:h-40 rounded-full overflow-hidden
+                     border-4 border-white shadow-lg ring-1 ring-black/[0.06]
+                     transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)]
+                     group-hover:scale-105 group-hover:shadow-xl"
         >
-          {dev.avatar}
+          {isImage ? (
+            <Image
+              src={dev.avatar}
+              alt={dev.name}
+              width={160}
+              height={160}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div
+              className="w-full h-full flex items-center justify-center text-white font-black text-4xl"
+              style={{
+                background: `linear-gradient(135deg, ${dev.gradientFrom}, ${dev.gradientTo})`,
+              }}
+            >
+              {dev.avatar}
+            </div>
+          )}
+        </div>
+
+        {/* Floating "view" badge on hover */}
+        <div
+          className="absolute bottom-1 right-1 w-8 h-8 rounded-full bg-white shadow-md
+                     flex items-center justify-center
+                     opacity-0 scale-75 group-hover:opacity-100 group-hover:scale-100
+                     transition-all duration-300 delay-100"
+        >
+          <ExternalLink size={14} className="text-blue-500" />
         </div>
       </div>
 
-      {/* Content */}
-      <div className="px-5 pb-5 pt-2 text-center">
-        <h3 className="font-bold text-slate-800 text-base leading-tight">
+      {/* Name & Role — minimal */}
+      <div className="text-center px-2">
+        <h3 className="text-base font-bold text-slate-800 leading-tight">
           {dev.name}
         </h3>
-        <p className={`text-xs font-semibold mt-0.5 ${dev.accent}`}>
+        <p className={`text-xs font-semibold mt-1 ${dev.accent}`}>
           {dev.role}
         </p>
-        <p className="text-xs text-slate-400 mt-0.5">{dev.nim}</p>
 
-        <p className="text-slate-500 text-xs mt-3 leading-relaxed line-clamp-2 text-left">
-          {dev.bio}
+        {/* Subtle hint */}
+        <p
+          className="text-[11px] text-slate-400 mt-2
+                     opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0
+                     transition-all duration-200 delay-75"
+        >
+          Klik untuk lihat profil →
         </p>
-
-        <div className="flex flex-wrap gap-1 mt-3 justify-center">
-          {dev.skills.slice(0, 3).map((skill) => (
-            <span
-              key={skill}
-              className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${dev.badge} ${dev.badgeText}`}
-            >
-              {skill}
-            </span>
-          ))}
-        </div>
-
-        <div className="mt-4 flex items-center justify-center gap-1.5 text-xs text-slate-400 group-hover:text-blue-500 transition-colors">
-          <ExternalLink size={11} />
-          <span>Lihat profil lengkap</span>
-        </div>
       </div>
     </div>
   );

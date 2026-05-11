@@ -19,7 +19,7 @@ import type {
   TechStack,
   Stat,
   FeatureColorMap,
-} from "@/features/about/type";
+} from "@/features/about/types";
 
 export const features: Feature[] = [
   {

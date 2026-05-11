@@ -12,7 +12,7 @@ import {
   CtaSection,
 } from "@/features/about/components/sections";
 import { developers } from "@/features/about/data/developer";
-import type { Developer } from "@/features/about/type";
+import type { Developer } from "@/features/about/types";
 
 export default function AboutPage() {
   const [activeDev, setActiveDev] = useState<Developer | null>(null);

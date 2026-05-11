@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { Activity } from "lucide-react";
+import { Activity, ArrowRight, Droplets, Wifi } from "lucide-react";
 import {
   features,
   featureColorMap,
   techStack,
   stats,
 } from "@/features/about/data/about";
+import { categoryStyle } from "@/features/about/constants/tech-style";
 
 /* ── Hero Section ── */
 export function HeroSection() {
@@ -30,7 +31,7 @@ export function HeroSection() {
 
         <p className="mt-6 max-w-2xl mx-auto text-slate-500 text-base md:text-lg leading-relaxed">
           Smart Dispenser adalah platform IoT berbasis web yang memungkinkan
-          pemantauan dan pengelolaan dispenser air pintar secara real-time —
+          pemantauan dan pengelolaan dispenser air pintar secara real-time
           dikembangkan oleh mahasiswa Politeknik Negeri Malang.
         </p>
 
@@ -98,6 +99,7 @@ export function FeaturesSection() {
 }
 
 /* ── Tech Stack Section ── */
+
 export function TechStackSection() {
   return (
     <section className="px-6 py-16 bg-white">
@@ -108,26 +110,33 @@ export function TechStackSection() {
         <h2 className="mt-2 text-2xl md:text-3xl font-black text-slate-800 mb-10">
           Dibangun dengan Stack Modern
         </h2>
-        <div className="flex flex-wrap justify-center gap-3">
-          {techStack.map(({ Icon, name, category }) => (
-            <div
-              key={name}
-              className="flex items-center gap-2.5 bg-slate-50 border border-slate-200 hover:border-blue-300 hover:bg-blue-50 rounded-2xl px-4 py-3 transition-all duration-200 group"
-            >
-              <Icon
-                size={16}
-                className="text-slate-400 group-hover:text-blue-500 transition-colors"
-              />
-              <div className="text-left">
-                <p className="text-[10px] font-bold text-slate-400 group-hover:text-blue-400 uppercase leading-none mb-0.5 transition-colors">
-                  {category}
-                </p>
-                <p className="text-sm font-semibold text-slate-700 group-hover:text-blue-700 transition-colors">
-                  {name}
-                </p>
+
+        <div className="flex flex-wrap justify-center gap-2.5">
+          {techStack.map(({ Icon, name, category }) => {
+            const style = categoryStyle[category] ?? categoryStyle["Backend"];
+            return (
+              <div
+                key={name}
+                className={`flex items-center gap-2.5 rounded-[14px] px-3.5 py-2.5
+                            border transition-transform duration-200 hover:-translate-y-0.5
+                            ${style.card}`}
+              >
+                <Icon size={18} className={style.icon} />
+                <div className="text-left">
+                  <p
+                    className={`text-[10px] font-semibold uppercase tracking-wide leading-none mb-0.5 ${style.cat}`}
+                  >
+                    {category}
+                  </p>
+                  <p
+                    className={`text-[13px] font-semibold leading-tight ${style.name}`}
+                  >
+                    {name}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
@@ -156,23 +165,49 @@ export function StatsSection() {
 /* ── CTA Section ── */
 export function CtaSection() {
   return (
-    <section className="px-6 py-20 bg-gradient-to-b from-slate-50 to-white text-center">
-      <div className="max-w-xl mx-auto">
-        <div className="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
-          <Activity size={26} className="text-blue-600" />
+    <section className="px-6 py-16">
+      <div className="max-w-3xl mx-auto">
+        <div className="rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-500 px-8 py-10 md:px-12 md:py-12">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 text-white text-[11px] font-semibold uppercase tracking-wide mb-6">
+            <Activity size={12} />
+            Monitoring Real-Time
+          </div>
+
+          {/* Heading */}
+          <h2 className="text-2xl md:text-3xl font-black text-white leading-tight max-w-lg">
+            Pantau Smart Dispenser Anda dengan Mudah
+          </h2>
+          <p className="mt-3 text-sm text-white/75 leading-relaxed max-w-md">
+            Cek kualitas air, level galon, dan status perangkat secara real-time
+            melalui dashboard berbasis IoT.
+          </p>
+
+          {/* Feature pills */}
+          <div className="flex flex-wrap gap-2 mt-6">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 text-white text-xs font-medium">
+              <Wifi size={13} />
+              Monitoring Online
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 text-white text-xs font-medium">
+              <Droplets size={13} />
+              Sensor TDS
+            </span>
+          </div>
+
+          {/* Actions */}
+          <div className="flex flex-col sm:flex-row gap-2.5 mt-8">
+            <Link
+              href="/member/dashboard"
+              className="inline-flex items-center justify-center gap-2 bg-white text-blue-600
+                         px-6 py-2.5 rounded-xl text-sm font-semibold
+                         hover:bg-blue-50 transition-colors duration-200"
+            >
+              Gunakan Dispenser
+              <ArrowRight size={14} />
+            </Link>
+          </div>
         </div>
-        <h2 className="text-2xl font-black text-slate-800">
-          Siap mencoba Smart Dispenser?
-        </h2>
-        <p className="text-slate-400 text-sm mt-2 mb-8 leading-relaxed">
-          Mulai pantau dispenser air Anda secara real-time sekarang juga.
-        </p>
-        <Link
-          href="/member/dashboard"
-          className="inline-block bg-blue-600 text-white px-10 py-3 rounded-xl text-sm font-semibold hover:bg-blue-700 transition-all duration-200 shadow-md shadow-blue-200 hover:-translate-y-0.5"
-        >
-          Gunakan Dispenser
-        </Link>
       </div>
     </section>
   );

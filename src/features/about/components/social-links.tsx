@@ -1,5 +1,5 @@
 import { socialIcons } from "@/features/about/constants/social-icons";
-import type { SocialType } from "@/features/about/type";
+import type { SocialType } from "@/features/about/types";
 
 interface SocialLinkProps {
   type: SocialType;
