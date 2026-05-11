@@ -45,8 +45,10 @@ export function WaterGauge({ level, liters, capacity }: WaterGaugeProps) {
     <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col h-full">
       <div className="flex items-center justify-between w-full mb-4">
         <div>
-          <h2 className="text-slate-800">Water Level</h2>
-          <p className="text-slate-400 text-sm mt-0.5">Tank capacity monitor</p>
+          <h2 className="text-slate-800">Level Air</h2>
+          <p className="text-slate-400 text-sm mt-0.5">
+            Kapasitas air dispenser
+          </p>
         </div>
         <span
           className={`text-xs px-3 py-1 rounded-full ${status.bg} ${status.color} font-medium`}
@@ -200,15 +202,15 @@ export function WaterGauge({ level, liters, capacity }: WaterGaugeProps) {
       <div className="flex gap-4 mt-2 text-xs text-slate-500">
         <span className="flex items-center gap-1">
           <span className="w-2 h-2 rounded-full bg-blue-500 inline-block"></span>{" "}
-          Full (&gt;60%)
+          Penuh (&gt;60%)
         </span>
         <span className="flex items-center gap-1">
           <span className="w-2 h-2 rounded-full bg-amber-500 inline-block"></span>{" "}
-          Low (30-60%)
+          Rendah (30-60%)
         </span>
         <span className="flex items-center gap-1">
           <span className="w-2 h-2 rounded-full bg-red-500 inline-block"></span>{" "}
-          Critical (&lt;30%)
+          Kritis (&lt;30%)
         </span>
       </div>
     </div>

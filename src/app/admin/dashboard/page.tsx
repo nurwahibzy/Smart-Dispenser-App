@@ -64,7 +64,7 @@ export default function DashboardPage() {
             totalDispenses={totalDispenses}
           />
 
-          <VolumeControl />
+          <VolumeControl className="flex-1" />
         </div>
       </div>
 

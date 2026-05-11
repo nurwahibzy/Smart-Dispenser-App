@@ -8,12 +8,10 @@ type ValveControlProps = {
   className?: string;
 };
 
-export default function ValveControl({
-  className,
-}: ValveControlProps) {
+export default function ValveControl({ className }: ValveControlProps) {
   const { isDispensing } = useMemberKiosk();
   const { data } = useDeviceData();
-  
+
   const isOpen = data?.status?.valveOpen || isDispensing;
 
   return (
@@ -39,14 +37,14 @@ export default function ValveControl({
             isOpen ? "bg-blue-50 text-blue-600" : "bg-slate-100 text-slate-500"
           }`}
         >
-          {isOpen ? "OPEN" : "CLOSED"}
+          {isOpen ? "TERBUKA" : "TERTUTUP"}
         </span>
       </div>
 
-      {/* Content */}
+      {/* Konten */}
       <div>
         <p className="text-slate-400 text-xs uppercase tracking-wide mb-1">
-          Valve Status
+          Status Katup
         </p>
 
         <div className="flex items-end gap-2">
@@ -54,7 +52,7 @@ export default function ValveControl({
             className="text-slate-800"
             style={{ fontSize: "1.75rem", fontWeight: 700 }}
           >
-            {isOpen ? "Open" : "Closed"}
+            {isOpen ? "BUKA" : "TUTUP"}
           </span>
 
           {isDispensing && (
@@ -64,14 +62,14 @@ export default function ValveControl({
 
         <p className="text-slate-400 text-xs mt-1">
           {isDispensing
-            ? "Dispensing in progress..."
+            ? "Proses pengisian sedang berlangsung..."
             : isOpen
-              ? "Water flow active"
-              : "Valve is closed"}
+              ? "Aliran air aktif"
+              : "Katup dalam keadaan tertutup"}
         </p>
       </div>
 
-      {/* Flow indicator */}
+      {/* Indikator aliran */}
       <div className="flex items-center gap-2 mt-1">
         <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
           <div
@@ -83,7 +81,7 @@ export default function ValveControl({
         <span
           className={`text-xs ${isOpen ? "text-blue-500" : "text-slate-400"}`}
         >
-          {isOpen ? "Flowing" : "Idle"}
+          {isOpen ? "Mengalir" : "Siaga"}
         </span>
       </div>
     </div>

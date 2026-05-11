@@ -6,7 +6,13 @@ type TdsCardProps = {
 
 export default function TdsCard({ tds }: TdsCardProps) {
   const tdsQuality =
-    tds < 100 ? "Excellent" : tds < 300 ? "Good" : tds < 600 ? "Fair" : "Poor";
+    tds < 100
+      ? "Baik"
+      : tds < 300
+        ? "Cukup"
+        : tds < 600
+          ? "Kurang Baik"
+          : "Buruk";
 
   const tdsColor =
     tds < 100
@@ -31,7 +37,7 @@ export default function TdsCard({ tds }: TdsCardProps) {
 
       <div>
         <p className="text-slate-400 text-xs uppercase tracking-wide mb-1">
-          TDS Value
+          Nilai TDS
         </p>
 
         <div className="flex items-end gap-1">
@@ -42,7 +48,7 @@ export default function TdsCard({ tds }: TdsCardProps) {
         </div>
 
         <p className="text-slate-400 text-xs mt-1">
-          Water quality: {tdsQuality}
+          Kualitas air: {tdsQuality}
         </p>
       </div>
     </div>

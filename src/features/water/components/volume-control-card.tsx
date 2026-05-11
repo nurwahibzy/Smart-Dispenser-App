@@ -41,9 +41,7 @@ type VolumeControlProps = {
   className?: string;
 };
 
-export default function VolumeControl({
-  className,
-}: VolumeControlProps) {
+export default function VolumeControl({ className }: VolumeControlProps) {
   const {
     volumeOptions,
     selectedVolume,
@@ -67,24 +65,24 @@ export default function VolumeControl({
 
       {/* Value */}
       <div>
-        <p className="text-slate-400 text-xs uppercase mb-1">Dispense Volume</p>
+        <p className="text-slate-400 text-xs uppercase mb-1">Jumlah Volume</p>
 
         <div className="flex items-end gap-1">
           <span className="text-slate-800 text-2xl font-bold">
             {selectedVolume ? selectedVolume : "—"}
           </span>
 
-          {selectedVolume && (
-            <span className="text-slate-400 text-sm">ml</span>
-          )}
+          {selectedVolume && <span className="text-slate-400 text-sm">ml</span>}
         </div>
 
         <p className="text-slate-400 text-xs mt-1">
-          {isDispensing ? "Dispensing..." : "Choose preset"}
+          {isDispensing
+            ? "Pengisian sedang berlangsung..."
+            : "Pilih jumlah volume air"}
         </p>
       </div>
 
-      {/* Buttons */}
+      {/* Tombol */}
       <div className="grid grid-cols-2 gap-2">
         {/* Presets */}
         {volumeOptions.map((volume) => (
@@ -117,9 +115,8 @@ export default function VolumeControl({
               : "bg-slate-100 text-slate-400 cursor-not-allowed"
         }`}
       >
-        <PlayCircle size={16} /> Start
+        <PlayCircle size={16} /> Mulai
       </button>
     </div>
   );
 }
-
