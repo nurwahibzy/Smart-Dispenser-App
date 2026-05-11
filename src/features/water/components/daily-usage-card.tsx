@@ -22,7 +22,7 @@ export default function DailyUsageCard({
 
       <div>
         <p className="text-slate-400 text-xs uppercase tracking-wide mb-1">
-          Daily Usage
+          Penggunaan Harian
         </p>
 
         <div className="flex items-end gap-1">
@@ -34,7 +34,7 @@ export default function DailyUsageCard({
         </div>
 
         <p className="text-slate-400 text-xs mt-1">
-          {totalDispenses} dispenses today
+          {totalDispenses} kali pemakaian hari ini
         </p>
       </div>
     </div>
