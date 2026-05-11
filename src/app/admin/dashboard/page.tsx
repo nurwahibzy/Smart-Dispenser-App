@@ -9,7 +9,6 @@ import ValveControl from "@/features/water/components/valve-control-card";
 import VolumeControl from "@/features/water/components/volume-control-card";
 import { ConsumptionTrend } from "@/features/transaction/components/consumption-trends-chart";
 import { HistoryTable } from "@/features/transaction/components/history-table";
-
 import { groupTransactionsByDay } from "@/lib/utils/chart";
 import { useDeviceData } from "@/lib/hooks/useDeviceData";
 import { useTransactionData } from "@/lib/hooks/useTransactionData";
