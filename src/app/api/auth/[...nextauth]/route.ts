@@ -1,6 +1,77 @@
 import NextAuth from "next-auth";
 import { authOptions } from "@/lib/auth/authOptions";
+import { NextRequest, NextResponse } from "next/server";
+import { decode } from "next-auth/jwt";
 
 const handler = NextAuth(authOptions);
 
-export { handler as GET, handler as POST };
+type NextAuthRequest = Parameters<typeof handler>[0];
+type NextAuthContext = Parameters<typeof handler>[1];
+
+async function authHandler(
+  req: NextRequest,
+  context: { params: Promise<{ nextauth: string[] }> },
+) {
+  const { nextauth } = await context.params;
+
+  if (
+    req.method === "POST" &&
+    nextauth.includes("callback") &&
+    nextauth.includes("credentials")
+  ) {
+    const response = (await handler(
+      req as unknown as NextAuthRequest,
+      context as unknown as NextAuthContext,
+    )) as NextResponse;
+
+    const setCookieHeader = response.headers.get("set-cookie");
+    if (setCookieHeader) {
+      const isProduction = process.env.NODE_ENV === "production";
+      const cookieName = isProduction
+        ? "__Secure-next-auth.session-token"
+        : "next-auth.session-token";
+
+      const cookieValue = setCookieHeader.match(
+        /next-auth\.session-token=([^;]+)/,
+      )?.[1];
+
+      if (cookieValue) {
+        const decoded = await decode({
+          token: cookieValue,
+          secret: process.env.NEXTAUTH_SECRET!,
+        });
+
+        const rememberMe = decoded?.rememberMe === true;
+        let newCookie: string;
+
+        if (rememberMe) {
+          const maxAge = 30 * 24 * 60 * 60;
+          newCookie = `${cookieName}=${cookieValue}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${
+            isProduction ? "; Secure" : ""
+          }`;
+          // console.log(
+          //   `[Auth] Remember Me: TRUE, Max-Age: ${maxAge}s (30 hari)`,
+          // );
+        } else {
+          newCookie = `${cookieName}=${cookieValue}; Path=/; HttpOnly; SameSite=Lax${
+            isProduction ? "; Secure" : ""
+          }`;
+          //console.log(
+          //   "[Auth] Remember Me: FALSE, Session Cookie (hilang saat browser ditutup)",
+          // );
+        }
+
+        response.headers.set("set-cookie", newCookie);
+      }
+    }
+
+    return response;
+  }
+
+  return handler(
+    req as unknown as NextAuthRequest,
+    context as unknown as NextAuthContext,
+  );
+}
+
+export { authHandler as GET, authHandler as POST };
