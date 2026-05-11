@@ -23,7 +23,6 @@ export default function AdminLayout({
 
   const [online] = useState(true);
   const [lastUpdate, setLastUpdate] = useState(new Date());
-  const [notifications, setNotifications] = useState(2);
 
   const fluctuate = () => {
     setLastUpdate(new Date());
@@ -42,8 +41,6 @@ export default function AdminLayout({
               online={online}
               lastUpdate={lastUpdate}
               fluctuate={fluctuate}
-              notifications={notifications}
-              setNotifications={setNotifications}
               DeviceStatusBar={DeviceStatusBar}
             />
           )}

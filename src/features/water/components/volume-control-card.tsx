@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Droplets, StopCircle, PlayCircle } from "lucide-react";
+import { Droplets, PlayCircle } from "lucide-react";
+import { useMemberKiosk } from "@/features/member/hooks/useMemberKiosk";
 
 function CircularProgress({ progress }: { progress: number }) {
   const r = 13;
@@ -38,35 +38,18 @@ function CircularProgress({ progress }: { progress: number }) {
 }
 
 type VolumeControlProps = {
-  selectedVolume: number | "continuous" | null;
-  onVolumeSelect: (volume: number | "continuous") => void;
-  customVolume: string;
-  onCustomVolumeChange: (value: string) => void;
-  dispensingProgress: number;
-  isDispensing: boolean;
-  onDispense: () => void;
-  onStop: () => void;
   className?: string;
 };
 
-export default function VolumeControl({
-  selectedVolume,
-  onVolumeSelect,
-  customVolume,
-  onCustomVolumeChange,
-  dispensingProgress,
-  isDispensing,
-  onDispense,
-  onStop,
-  className,
-}: VolumeControlProps) {
-  const presets = [100, 250, 500, 1000];
-  const [showCustom, setShowCustom] = useState(false);
-
-  const isCustomActive =
-    selectedVolume !== null &&
-    selectedVolume !== "continuous" &&
-    !presets.includes(selectedVolume);
+export default function VolumeControl({ className }: VolumeControlProps) {
+  const {
+    volumeOptions,
+    selectedVolume,
+    setSelectedVolume,
+    startDispensing,
+    isDispensing,
+    progressPercent,
+  } = useMemberKiosk();
 
   return (
     <div
@@ -77,41 +60,36 @@ export default function VolumeControl({
         <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-blue-50">
           <Droplets size={18} className="text-blue-600" />
         </div>
-        {isDispensing && <CircularProgress progress={dispensingProgress} />}
+        {isDispensing && <CircularProgress progress={progressPercent} />}
       </div>
 
       {/* Value */}
       <div>
-        <p className="text-slate-400 text-xs uppercase mb-1">Dispense Volume</p>
+        <p className="text-slate-400 text-xs uppercase mb-1">Jumlah Volume</p>
 
         <div className="flex items-end gap-1">
           <span className="text-slate-800 text-2xl font-bold">
-            {selectedVolume === "continuous"
-              ? "Manual"
-              : selectedVolume
-                ? selectedVolume
-                : "—"}
+            {selectedVolume ? selectedVolume : "—"}
           </span>
 
-          {selectedVolume !== "continuous" && selectedVolume && (
-            <span className="text-slate-400 text-sm">ml</span>
-          )}
+          {selectedVolume && <span className="text-slate-400 text-sm">ml</span>}
         </div>
 
         <p className="text-slate-400 text-xs mt-1">
-          {isDispensing ? "Dispensing..." : "Choose preset or custom"}
+          {isDispensing
+            ? "Pengisian sedang berlangsung..."
+            : "Pilih jumlah volume air"}
         </p>
       </div>
 
-      {/* Buttons */}
+      {/* Tombol */}
       <div className="grid grid-cols-2 gap-2">
         {/* Presets */}
-        {presets.map((volume) => (
+        {volumeOptions.map((volume) => (
           <button
             key={volume}
             onClick={() => {
-              onVolumeSelect(volume);
-              setShowCustom(false);
+              setSelectedVolume(volume);
             }}
             disabled={isDispensing}
             className={`px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
@@ -123,98 +101,21 @@ export default function VolumeControl({
             {volume}ml
           </button>
         ))}
-
-        {/* Manual */}
-        <button
-          onClick={() => {
-            onVolumeSelect("continuous");
-            setShowCustom(false);
-          }}
-          disabled={isDispensing}
-          className={`px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
-            selectedVolume === "continuous"
-              ? "bg-blue-500 text-white shadow-sm"
-              : "border border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300"
-          } ${isDispensing ? "opacity-50 cursor-not-allowed" : ""}`}
-        >
-          Manual
-        </button>
-
-        {/* Custom */}
-        <button
-          onClick={() => setShowCustom(!showCustom)}
-          disabled={isDispensing}
-          className={`px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
-            isCustomActive
-              ? "bg-blue-500 text-white shadow-sm"
-              : "border border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300"
-          } ${isDispensing ? "opacity-50 cursor-not-allowed" : ""}`}
-        >
-          Custom
-        </button>
       </div>
-
-      {/* Custom Input */}
-      {showCustom && (
-        <div className="flex gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
-          <input
-            type="number"
-            min="1" // 🔥 cegah minus dari UI
-            value={customVolume}
-            onChange={(e) => {
-              const value = e.target.value;
-
-              // 🔥 hanya izinkan angka >= 0
-              if (Number(value) >= 0) {
-                onCustomVolumeChange(value);
-              }
-            }}
-            placeholder="ml"
-            disabled={isDispensing}
-            className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-          />
-
-          <button
-            onClick={() => {
-              const val = parseInt(customVolume);
-
-              // 🔥 validasi final (anti minus & nol)
-              if (val > 0) {
-                onVolumeSelect(val);
-                setShowCustom(false);
-              }
-            }}
-            disabled={
-              isDispensing || !customVolume || parseInt(customVolume) <= 0 
-            }
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition-all disabled:opacity-50"
-          >
-            Set
-          </button>
-        </div>
-      )}
 
       {/* Action */}
       <button
-        onClick={isDispensing ? onStop : onDispense}
-        disabled={!isDispensing && !selectedVolume}
+        onClick={startDispensing}
+        disabled={isDispensing || !selectedVolume}
         className={`w-full py-2 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold transition-all duration-200 ${
           isDispensing
-            ? "bg-red-500 hover:bg-red-600 text-white"
+            ? "bg-slate-100 text-slate-400 cursor-not-allowed"
             : selectedVolume
               ? "bg-blue-500 hover:bg-blue-600 text-white"
               : "bg-slate-100 text-slate-400 cursor-not-allowed"
         }`}
       >
-        {isDispensing ? (
-          <>
-            <StopCircle size={16} /> Stop
-          </>
-        ) : (
-          <>
-            <PlayCircle size={16} /> Start
-          </>
-        )}
+        <PlayCircle size={16} /> Mulai
       </button>
     </div>
   );
