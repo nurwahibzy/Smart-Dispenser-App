@@ -1,18 +1,21 @@
 "use client";
 
 import { Zap, Loader2 } from "lucide-react";
+import { useMemberKiosk } from "@/features/member/hooks/useMemberKiosk";
+import { useDeviceData } from "@/lib/hooks/useDeviceData";
 
 type ValveControlProps = {
-  isOpen: boolean;
-  isDispensing?: boolean;
   className?: string;
 };
 
 export default function ValveControl({
-  isOpen,
-  isDispensing,
   className,
 }: ValveControlProps) {
+  const { isDispensing } = useMemberKiosk();
+  const { data } = useDeviceData();
+  
+  const isOpen = data?.status?.valveOpen || isDispensing;
+
   return (
     <div
       className={`bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex flex-col gap-3 ${className}`}
