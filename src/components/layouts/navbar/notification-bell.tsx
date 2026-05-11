@@ -20,7 +20,9 @@ export default function NotificationBell() {
   const [ticketNotifs, setTicketNotifs] = useState<NotificationItem[]>([]);
   const { data: deviceData } = useDeviceData();
   const [clearedIds, setClearedIds] = useState<string[]>([]);
-  const [selectedTicket, setSelectedTicket] = useState<NotificationItem | null>(null);
+  const [selectedTicket, setSelectedTicket] = useState<NotificationItem | null>(
+    null,
+  );
   const router = useRouter();
 
   // Watch Helpdesk Tickets (Firestore)
@@ -35,28 +37,27 @@ export default function NotificationBell() {
         const data = doc.data();
 
         // Try parsing date
-        let timeStr = "Not processed yet";
+        let timeStr = "Belum diproses";
         if (data.createdAt) {
           try {
-            // Handle both Firestore Timestamp and plain string/number
             const date = data.createdAt?.toDate
-              ? data.createdAt.toDate() // Firestore Timestamp
-              : new Date(data.createdAt); // string or number fallback
+              ? data.createdAt.toDate()
+              : new Date(data.createdAt);
 
-            timeStr = date.toLocaleDateString("en-US", {
+            timeStr = date.toLocaleDateString("id-ID", {
               day: "numeric",
               month: "short",
               hour: "2-digit",
               minute: "2-digit",
             });
           } catch {
-            timeStr = "Unknown time";
+            timeStr = "Waktu tidak diketahui";
           }
         }
 
         return {
           id: `ticket-${doc.id}`,
-          text: `New Ticket: ${data.title || "Need Assistance"}`,
+          text: `Tiket Baru: ${data.title || "Butuh Bantuan"}`,
           time: timeStr,
           type: "info" as const,
           ticketData: data,
@@ -76,16 +77,16 @@ export default function NotificationBell() {
     if (!deviceData.status.online) {
       deviceNotifs.push({
         id: "dev-offline",
-        text: "Dispenser Device Offline!",
-        time: "Now",
+        text: "Perangkat Dispenser Offline!",
+        time: "Sekarang",
         type: "error",
       });
     } else {
       if (deviceData.sensors.waterLevel <= 20) {
         deviceNotifs.push({
           id: "dev-water",
-          text: `Critical Water Level (${deviceData.sensors.waterLevel}%)`,
-          time: "Now",
+          text: `Level Air Kritis (${deviceData.sensors.waterLevel}%)`,
+          time: "Sekarang",
           type: "warning",
         });
       }
@@ -93,8 +94,8 @@ export default function NotificationBell() {
       if (deviceData.sensors.tds > 300) {
         deviceNotifs.push({
           id: "dev-tds",
-          text: `High TDS Level (${deviceData.sensors.tds} ppm)`,
-          time: "Now",
+          text: `Kadar TDS Tinggi (${deviceData.sensors.tds} ppm)`,
+          time: "Sekarang",
           type: "warning",
         });
       }
@@ -133,7 +134,7 @@ export default function NotificationBell() {
           {/* HEADER */}
           <div className="px-4 py-3 border-b border-slate-50 flex justify-between items-center bg-white">
             <span className="text-sm font-medium text-slate-700">
-              Notifications
+              Notifikasi
             </span>
 
             {notificationsCount > 0 && (
@@ -141,7 +142,7 @@ export default function NotificationBell() {
                 onClick={handleClearAll}
                 className="text-xs text-blue-600 hover:underline"
               >
-                Mark as Read
+                Tandai Sudah Dibaca
               </button>
             )}
           </div>
@@ -150,7 +151,7 @@ export default function NotificationBell() {
           <div className="max-h-64 overflow-y-auto bg-white">
             {notificationsCount === 0 ? (
               <div className="p-4 text-sm text-slate-400 text-center">
-                No new notifications
+                Tidak ada notifikasi baru
               </div>
             ) : (
               allNotifications.map((notif) => (
