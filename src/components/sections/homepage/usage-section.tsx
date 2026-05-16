@@ -1,57 +1,64 @@
-import { Box, Play, SlidersHorizontal } from "lucide-react";
-
 const usageSteps = [
   {
-    title: "1. Tempatkan Wadah",
+    number: "01",
+    title: "Tempatkan Wadah",
     desc: "Letakkan wadah air yang akan digunakan pada posisi yang telah disediakan di bawah dispenser.",
-    accent: "from-blue-100 to-blue-50",
-    icon: Box,
+    gradient: "from-blue-500 to-blue-600",
+    border: "border-blue-100",
   },
   {
-    title: "2. Pilih Volume Air",
+    number: "02",
+    title: "Pilih Volume Air",
     desc: "Pilih volume air yang sesuai dengan kapasitas wadah yang digunakan.",
-    accent: "from-cyan-100 to-blue-50",
-    icon: SlidersHorizontal,
+    gradient: "from-cyan-500 to-blue-500",
+    border: "border-cyan-100",
   },
   {
-    title: "3. Tekan Tombol Mulai",
-    desc: "Tekan tombol mulai, maka air akan keluar secara otomatis sesuai dengan volume yang telah dipilih.",
-    accent: "from-sky-100 to-indigo-50",
-    icon: Play,
+    number: "03",
+    title: "Tekan Tombol Mulai",
+    desc: "Tekan tombol mulai pengisian, air akan keluar otomatis sesuai volume yang dipilih.",
+    gradient: "from-sky-500 to-cyan-500",
+    border: "border-sky-100",
   },
 ];
 
 export default function UsageSection() {
   return (
-    <section className="border-t border-blue-100 py-16 md:py-20">
+    <section className="border-t border-blue-100/80 py-16 md:py-24">
       <div className="max-w-5xl mx-auto px-6">
-        <h2 className="text-center text-5xl md:text-6xl font-black text-blue-600 tracking-tight">
-          Cara Pakai
-        </h2>
+        <div className="text-center mb-14">
+          <h2 className="text-5xl md:text-6xl font-black text-blue-700 tracking-tight">
+            Cara Pakai
+          </h2>
+          <p className="text-slate-500 mt-4 max-w-xl mx-auto text-sm md:text-base leading-relaxed">
+            Alur penggunaan dibuat cepat dan sederhana supaya pengalaman isi air terasa nyaman.
+          </p>
+        </div>
 
-        <p className="text-center text-blue-500 mt-5 max-w-2xl mx-auto text-sm md:text-base">
-          Alur penggunaan dibuat cepat dan sederhana supaya pengalaman isi air terasa nyaman.
-        </p>
-
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {usageSteps.map((item) => (
             <article
-              key={item.title}
-              className="bg-white border border-blue-100 rounded-2xl p-5 flex items-start gap-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition"
+              key={item.number}
+              className={`relative bg-white border ${item.border} rounded-2xl p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 overflow-hidden`}
             >
+              {/* Watermark number — background dekoratif */}
+              {/* <span className="absolute -right-2 -top-3 text-7xl font-black text-slate-100 select-none pointer-events-none leading-none">
+                {item.number}
+              </span> */}
+
+              {/* Number badge — gantikan icon */}
               <div
-                className={`h-14 w-14 rounded-xl bg-gradient-to-br ${item.accent} shrink-0 border border-blue-100 flex items-center justify-center text-blue-600`}
+                className={`h-12 w-12 rounded-xl bg-gradient-to-br ${item.gradient} flex items-center justify-center text-white font-black text-lg shadow-md mb-5`}
               >
-                <item.icon size={22} />
+                {item.number}
               </div>
-              <div>
-                <h3 className="text-xl font-bold text-blue-600 leading-snug">
-                  {item.title}
-                </h3>
-                <p className="mt-1 text-sm text-blue-600 leading-relaxed">
-                  {item.desc}
-                </p>
-              </div>
+
+              <h3 className="text-lg font-bold text-slate-800 leading-snug">
+                {item.title}
+              </h3>
+              <p className="mt-2 text-sm text-slate-500 leading-relaxed">
+                {item.desc}
+              </p>
             </article>
           ))}
         </div>
