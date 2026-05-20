@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Droplets, Check } from "lucide-react";
+import { Droplets } from "lucide-react";
 import { useMemberKiosk } from "@/features/member/hooks/useMemberKiosk";
 import WaterLevelSection from "@/features/water/components/water-level-section";
 import TdsCard from "@/features/water/components/tds-card";
@@ -9,6 +9,7 @@ import DailyUsageCard from "@/features/water/components/daily-usage-card";
 import { useDeviceData } from "@/lib/hooks/useDeviceData";
 import { useTransactionData } from "@/lib/hooks/useTransactionData";
 import { calculateDailyUsage } from "@/lib/utils/transaction";
+import GlassDetectionCard from "@/features/water/components/glass-detection-card";
 
 export default function MemberKioskContent() {
   const {
@@ -30,6 +31,7 @@ export default function MemberKioskContent() {
   const tds = deviceData?.sensors?.tds || 0;
 
   const [modalActive, setModalActive] = useState(false);
+  const isGlassDetected = deviceData?.sensors?.glassDetected || false;
 
   useEffect(() => {
     if (finishState === "done") {
@@ -42,7 +44,7 @@ export default function MemberKioskContent() {
 
   return (
     <div className="space-y-6 md:space-y-8">
-      <section className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:grid-rows-2 lg:items-start">
+      <section className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:grid-rows-2">
         <div className="lg:row-span-2 lg:self-stretch">
           <div className="h-full lg:[&>div]:p-4 lg:[&_svg]:h-[220px] lg:[&_svg]:w-[185px]">
             <WaterLevelSection />
@@ -53,7 +55,8 @@ export default function MemberKioskContent() {
           <TdsCard tds={tds} />
         </div>
 
-        <div>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <GlassDetectionCard isGlassDetected={isGlassDetected} />
           <DailyUsageCard
             dailyUsage={dailyUsage}
             totalDispenses={totalDispenses}
@@ -130,7 +133,7 @@ export default function MemberKioskContent() {
               ? progressText
               : finishState === "done"
               ? "Selesai!"
-              : "Siap mengisi"}
+              : ""}
           </p>
         </div>
       </section>
