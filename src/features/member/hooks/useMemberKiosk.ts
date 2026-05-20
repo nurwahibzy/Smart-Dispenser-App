@@ -110,7 +110,7 @@ export const useMemberKiosk = () => {
         if (finishRef.current) clearTimeout(finishRef.current);
         finishRef.current = setTimeout(() => {
           resetToInitial();
-        }, 3000);
+        }, 4000);
       }
     }, 300);
   };

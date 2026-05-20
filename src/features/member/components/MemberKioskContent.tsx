@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Droplets } from "lucide-react";
 import { useMemberKiosk } from "@/features/member/hooks/useMemberKiosk";
 import WaterLevelSection from "@/features/water/components/water-level-section";
@@ -8,6 +9,7 @@ import DailyUsageCard from "@/features/water/components/daily-usage-card";
 import { useDeviceData } from "@/lib/hooks/useDeviceData";
 import { useTransactionData } from "@/lib/hooks/useTransactionData";
 import { calculateDailyUsage } from "@/lib/utils/transaction";
+import GlassDetectionCard from "@/features/water/components/glass-detection-card";
 
 export default function MemberKioskContent() {
   const {
@@ -28,9 +30,21 @@ export default function MemberKioskContent() {
   const { dailyUsage, totalDispenses } = calculateDailyUsage(transactions || []);
   const tds = deviceData?.sensors?.tds || 0;
 
+  const [modalActive, setModalActive] = useState(false);
+  const isGlassDetected = deviceData?.sensors?.glassDetected || false;
+
+  useEffect(() => {
+    if (finishState === "done") {
+      setModalActive(false);
+      const t = setTimeout(() => setModalActive(true), 20);
+      return () => clearTimeout(t);
+    }
+    setModalActive(false);
+  }, [finishState]);
+
   return (
     <div className="space-y-6 md:space-y-8">
-      <section className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:grid-rows-2 lg:items-start">
+      <section className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:grid-rows-2">
         <div className="lg:row-span-2 lg:self-stretch">
           <div className="h-full lg:[&>div]:p-4 lg:[&_svg]:h-[220px] lg:[&_svg]:w-[185px]">
             <WaterLevelSection />
@@ -41,7 +55,8 @@ export default function MemberKioskContent() {
           <TdsCard tds={tds} />
         </div>
 
-        <div>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <GlassDetectionCard isGlassDetected={isGlassDetected} />
           <DailyUsageCard
             dailyUsage={dailyUsage}
             totalDispenses={totalDispenses}
@@ -55,7 +70,7 @@ export default function MemberKioskContent() {
 
       <section className="bg-white rounded-2xl border border-blue-100 shadow-sm p-5 md:p-6">
         <h2 className="text-2xl md:text-3xl font-black text-blue-600 tracking-tight text-center">
-          Pilih Volume
+          Pilih Volume Air
         </h2>
 
         <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -118,10 +133,46 @@ export default function MemberKioskContent() {
               ? progressText
               : finishState === "done"
               ? "Selesai!"
-              : "Siap mengisi"}
+              : ""}
           </p>
         </div>
       </section>
+      {finishState === "done" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+
+          <div
+            className={`relative w-[min(92%,640px)] md:w-[560px] bg-white/95 rounded-2xl p-10 flex flex-col items-center gap-6 shadow-xl transform transition-all duration-300 pointer-events-auto ${
+              modalActive ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-6 scale-95"
+            }`}
+          >
+            <style>{`
+              .sd-check-circle { transform-origin: center; }
+              .sd-check-path { stroke-dasharray: 100; stroke-dashoffset: 100; }
+              .sd-modal-active .sd-check-path { animation: sd-draw 600ms cubic-bezier(.2,.8,.2,1) forwards 250ms; }
+              @keyframes sd-draw {
+                to { stroke-dashoffset: 0; }
+              }
+              .sd-pop { transform-origin: center; }
+              .sd-modal-active .sd-pop { animation: sd-pop 350ms cubic-bezier(.2,.8,.2,1) forwards; }
+              @keyframes sd-pop { from { transform: scale(.8); opacity:0 } to { transform: scale(1); opacity:1 } }
+            `}</style>
+
+            <div className={"sd-pop relative flex items-center justify-center" + (modalActive ? " sd-modal-active" : "") }>
+              <div className="absolute -inset-3 rounded-full bg-gradient-to-tr from-green-300 to-emerald-200 blur-xl opacity-80" />
+              <div className="relative rounded-full bg-white p-6 flex items-center justify-center shadow-md">
+                <svg className="sd-check-circle" width="140" height="140" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="60" cy="60" r="52" stroke="#10B981" strokeWidth="7" fill="rgba(16,185,129,0.06)" />
+                  <path className={`sd-check-path`} d="M36 62 L52 78 L84 44" stroke="#059669" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                </svg>
+              </div>
+            </div>
+
+            <h3 className="text-3xl md:text-4xl font-extrabold text-slate-800">Berhasil!</h3>
+            <p className="text-center text-base md:text-lg text-slate-600 max-w-[480px]">Pengisian Berhasil Dilakukan</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
