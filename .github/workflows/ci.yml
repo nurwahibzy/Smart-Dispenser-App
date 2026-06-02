@@ -43,3 +43,10 @@ jobs:
 
       - name: Build project
         run: npm run build
+        env:
+        FIREBASE_ADMIN_PROJECT_ID: ${{ secrets.FIREBASE_ADMIN_PROJECT_ID }}
+        FIREBASE_ADMIN_CLIENT_EMAIL: ${{ secrets.FIREBASE_ADMIN_CLIENT_EMAIL }}
+        FIREBASE_ADMIN_PRIVATE_KEY: ${{ secrets.FIREBASE_ADMIN_PRIVATE_KEY }}
+        NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+        NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+        NEXT_PUBLIC_IMGBB_API_KEY: ${{ secrets.NEXT_PUBLIC_IMGBB_API_KEY }}
