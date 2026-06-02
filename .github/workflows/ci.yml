@@ -2,12 +2,7 @@ name: CI Smart Dispenser App
 
 on:
   push:
-    branches:
-      - main
-      - ci-cd
   pull_request:
-    branches:
-      - main
 
 jobs:
   test:
