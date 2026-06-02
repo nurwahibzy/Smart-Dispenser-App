@@ -1,0 +1,50 @@
+name: CI Smart Dispenser App
+
+on:
+  push:
+    branches:
+      - main
+      - ci-cd
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Run Unit Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit test
+        run: npm run test
+
+  build:
+    name: Build Project
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
