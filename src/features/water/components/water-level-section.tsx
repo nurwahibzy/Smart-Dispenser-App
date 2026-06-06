@@ -7,7 +7,7 @@ import { calculateWaterLiters } from "@/lib/utils/water";
 export default function WaterLevelSection() {
   const { waterLevel, loading } = useWaterData();
 
-  const capacity = 20;
+  const capacity = 3.5;
   const liters = calculateWaterLiters(waterLevel, capacity);
 
   if (loading) {
