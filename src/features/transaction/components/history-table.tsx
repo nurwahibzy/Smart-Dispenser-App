@@ -53,7 +53,7 @@ export function HistoryTable() {
         time: dateObj.toTimeString().slice(0, 5),
         event: d.type === "auto" ? "Auto" : "Manual",
         amount: d.actualVolume,
-        tds: d.tds,
+        tds: Math.round(d.tds ?? 0),
         status: d.status ? "Success" : "Warning",
       };
     });
