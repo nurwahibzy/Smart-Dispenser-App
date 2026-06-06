@@ -16,7 +16,7 @@ export default function Footer() {
             { label: "Beranda", href: "/" },
             { label: "Hubungi Kami", href: "/contact" },
             { label: "Tentang Kami", href: "/about" },
-            { label: "Syarat & Ketentuan", href: "#" },
+            { label: "Syarat & Ketentuan", href: "/terms" },
             { label: "Kebijakan Privasi", href: "#" },
             { label: "Helpdesk", href: "/helpdesk" },
           ].map((item) => (
