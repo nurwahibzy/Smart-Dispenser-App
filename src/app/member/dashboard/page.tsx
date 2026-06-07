@@ -157,16 +157,7 @@ export default function MemberDashboardPage() {
                 </div>
             </main>
 
-            {/* ── Footer with glass effect ── */}
-            <div
-                style={{
-                    background: 'rgba(255,255,255,0.6)',
-                    borderTop: '1px solid rgba(147,197,253,0.3)',
-                    backdropFilter: 'blur(12px)',
-                }}
-            >
-                <Footer />
-            </div>
+            <Footer />
         </div>
     );
 }
