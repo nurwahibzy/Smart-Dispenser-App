@@ -36,6 +36,6 @@ describe('WaterLevelSection', () => {
 
     render(<WaterLevelSection />);
     expect(screen.getByTestId('water-gauge')).toBeInTheDocument();
-    expect(screen.getByText('Level: 50, Liters: 10, Capacity: 20')).toBeInTheDocument();
+    expect(screen.getByText('Level: 50, Liters: 1.75, Capacity: 3.5')).toBeInTheDocument();
   });
 });

@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { ChevronUp, ChevronDown, Search, Filter } from "lucide-react";
+import { ChevronUp, ChevronDown, Search } from "lucide-react";
 
 import { subscribeDispenseHistory } from "@/features/transaction/infrastructure/transaction.firebase";
 import type { Transaction } from "@/types/transaction";
+import { Select } from "@/components/ui/select";
 
 type SortKey = "date" | "time" | "amount" | "tds";
 type SortDir = "asc" | "desc";
@@ -14,7 +15,7 @@ export function HistoryTable() {
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("date");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
-  const [filter, setFilter] = useState<"All" | "Auto" | "Manual">("All");
+  const [volumeFilter, setVolumeFilter] = useState<number | null>(null);
   const [page, setPage] = useState(1);
   const PER_PAGE = 8;
 
@@ -51,10 +52,10 @@ export function HistoryTable() {
         id: d.id,
         date: dateObj.toISOString().split("T")[0],
         time: dateObj.toTimeString().slice(0, 5),
-        event: d.type === "auto" ? "Auto" : "Manual",
+        event: d.type === "auto" ? "Otomatis" : "Manual",
         amount: d.actualVolume,
-        tds: d.tds,
-        status: d.status ? "Success" : "Warning",
+        tds: Math.round(d.tds ?? 0),
+        status: d.status ? "Berhasil" : "Peringatan",
       };
     });
   }, [data]);
@@ -69,9 +70,9 @@ export function HistoryTable() {
           r.tds.toString().includes(search) ||
           r.amount.toString().includes(search);
 
-        const matchFilter = filter === "All" || r.event === filter;
+        const matchVolume = volumeFilter === null || r.amount === volumeFilter;
 
-        return matchSearch && matchFilter;
+        return matchSearch && matchVolume;
       })
       .sort((a, b) => {
         let av: string | number = a[sortKey];
@@ -86,7 +87,7 @@ export function HistoryTable() {
         if (av > bv) return sortDir === "asc" ? 1 : -1;
         return 0;
       });
-  }, [mapped, search, filter, sortKey, sortDir]);
+  }, [mapped, search, volumeFilter, sortKey, sortDir]);
 
   const totalPages = Math.ceil(filtered.length / PER_PAGE);
   const paginated = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
@@ -114,14 +115,14 @@ export function HistoryTable() {
       <div className="p-6 border-b border-slate-50">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-slate-800">Dispense History</h2>
+            <h2 className="text-slate-800">Riwayat Pengisian</h2>
             <p className="text-slate-400 text-sm mt-0.5">
-              {filtered.length} records found
+              {filtered.length} data ditemukan
             </p>
           </div>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           {/* SEARCH */}
           <div className="relative flex-1">
             <Search
@@ -134,31 +135,29 @@ export function HistoryTable() {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              placeholder="Search records..."
+              placeholder="Cari data..."
               className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-100 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300"
             />
           </div>
 
-          {/* FILTER */}
-          <div className="flex items-center gap-1 bg-slate-50 border border-slate-100 rounded-lg px-2">
-            <Filter size={13} className="text-slate-400" />
-            {(["All", "Auto", "Manual"] as const).map((f) => (
-              <button
-                key={f}
-                onClick={() => {
-                  setFilter(f);
-                  setPage(1);
-                }}
-                className={`px-3 py-1.5 rounded-md text-xs transition-all ${
-                  filter === f
-                    ? "bg-blue-600 text-white"
-                    : "text-slate-500 hover:text-slate-700"
-                }`}
-              >
-                {f}
-              </button>
-            ))}
-          </div>
+          {/* VOLUME FILTER */}
+          <Select
+            options={[
+              { label: "Semua Volume", value: "" },
+              { label: "100 mL", value: "100" },
+              { label: "300 mL", value: "300" },
+              { label: "500 mL", value: "500" },
+              { label: "1000 mL", value: "1000" },
+            ]}
+            value={volumeFilter ? volumeFilter.toString() : ""}
+            onChange={(val) => {
+              setVolumeFilter(val ? Number(val) : null);
+              setPage(1);
+            }}
+            placeholder="Semua Volume"
+            className="bg-slate-50 border-slate-100 py-2 text-sm text-slate-700 font-medium"
+            wrapperClassName="min-w-[140px] w-full sm:w-auto"
+          />
         </div>
       </div>
 
@@ -168,10 +167,10 @@ export function HistoryTable() {
           <thead>
             <tr className="bg-slate-50 text-left">
               {[
-                { label: "Date", key: "date" },
-                { label: "Time", key: "time" },
-                { label: "Event" },
-                { label: "Amount", key: "amount" },
+                { label: "Tanggal", key: "date" },
+                { label: "Waktu", key: "time" },
+                { label: "Metode" },
+                { label: "Volume", key: "amount" },
                 { label: "TDS", key: "tds", className: "hidden md:table-cell" },
                 { label: "Status", className: "hidden md:table-cell" },
               ].map((col) => (
@@ -195,7 +194,7 @@ export function HistoryTable() {
             {paginated.length === 0 ? (
               <tr>
                 <td colSpan={7} className="text-center py-10 text-slate-400">
-                  No records found
+                  Data tidak ditemukan
                 </td>
               </tr>
             ) : (
@@ -217,14 +216,14 @@ export function HistoryTable() {
                   <td className="px-4 py-3">
                     <span
                       className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${
-                        row.event === "Auto"
+                        row.event === "Otomatis"
                           ? "bg-blue-50 text-blue-600"
                           : "bg-purple-50 text-purple-600"
                       }`}
                     >
                       <span
                         className={`w-1.5 h-1.5 rounded-full ${
-                          row.event === "Auto" ? "bg-blue-500" : "bg-purple-500"
+                          row.event === "Otomatis" ? "bg-blue-500" : "bg-purple-500"
                         }`}
                       />
                       {row.event}
@@ -252,14 +251,14 @@ export function HistoryTable() {
                   <td className="px-4 py-3 hidden md:table-cell">
                     <span
                       className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${
-                        row.status === "Success"
+                        row.status === "Berhasil"
                           ? "bg-emerald-50 text-emerald-600"
                           : "bg-amber-50 text-amber-600"
                       }`}
                     >
                       <span
                         className={`w-1.5 h-1.5 rounded-full ${
-                          row.status === "Success"
+                          row.status === "Berhasil"
                             ? "bg-emerald-500"
                             : "bg-amber-500"
                         }`}
@@ -278,7 +277,7 @@ export function HistoryTable() {
       {totalPages > 1 && (
         <div className="flex items-center justify-between px-6 py-4 border-t border-slate-50">
           <span className="text-xs text-slate-400">
-            Page {page} of {totalPages}
+            Halaman {page} dari {totalPages}
           </span>
 
           <div className="flex gap-1">

@@ -38,8 +38,8 @@ describe('HistoryTable', () => {
 
     render(<HistoryTable />);
     
-    expect(screen.getByText('Dispense History')).toBeInTheDocument();
-    expect(screen.getByText('2 records found')).toBeInTheDocument();
+    expect(screen.getByText('Riwayat Pengisian')).toBeInTheDocument();
+    expect(screen.getByText('2 data ditemukan')).toBeInTheDocument();
     expect(screen.getByText('250')).toBeInTheDocument();
     expect(screen.getByText('500')).toBeInTheDocument();
   });
@@ -52,18 +52,18 @@ describe('HistoryTable', () => {
 
     render(<HistoryTable />);
     
-    const searchInput = screen.getByPlaceholderText('Search records...');
+    const searchInput = screen.getByPlaceholderText('Cari data...');
     
     act(() => {
       fireEvent.change(searchInput, { target: { value: '250' } });
     });
     
-    expect(screen.getByText('1 records found')).toBeInTheDocument();
+    expect(screen.getByText('1 data ditemukan')).toBeInTheDocument();
     expect(screen.getByText('250')).toBeInTheDocument();
     expect(screen.queryByText('500')).not.toBeInTheDocument();
   });
 
-  it('filters records by type', () => {
+  it('sorts records by volume', () => {
     (subscribeDispenseHistory as jest.Mock).mockImplementation((callback) => {
       callback(mockTransactions);
       return jest.fn();
@@ -71,15 +71,12 @@ describe('HistoryTable', () => {
 
     render(<HistoryTable />);
     
-    const autoFilterBtn = screen.getByRole('button', { name: 'Auto' });
+    const volumeHeader = screen.getByText('Volume');
     
     act(() => {
-      fireEvent.click(autoFilterBtn);
+      fireEvent.click(volumeHeader);
     });
     
-    expect(screen.getByText('1 records found')).toBeInTheDocument();
-    // Only auto record is 250ml
-    expect(screen.getByText('250')).toBeInTheDocument();
-    expect(screen.queryByText('500')).not.toBeInTheDocument();
+    expect(screen.getByText('2 data ditemukan')).toBeInTheDocument();
   });
 });

@@ -94,7 +94,7 @@ export default function NotificationBell() {
       if (deviceData.sensors.tds > 300) {
         deviceNotifs.push({
           id: "dev-tds",
-          text: `Kadar TDS Tinggi (${deviceData.sensors.tds} ppm)`,
+          text: `Kadar TDS Tinggi (${Math.round(deviceData.sensors.tds)} ppm)`,
           time: "Sekarang",
           type: "warning",
         });

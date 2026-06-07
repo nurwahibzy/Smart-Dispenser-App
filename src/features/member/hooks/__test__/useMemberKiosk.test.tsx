@@ -62,20 +62,20 @@ describe("useMemberKiosk", () => {
 		expect(result.current.canStart).toBe(false);
 	});
 
-	it("volumeOptions berisi [100, 250, 500, 1000]", () => {
+	it("volumeOptions berisi [100, 300, 500, 1000]", () => {
 		const { result } = renderHook(() => useMemberKiosk());
 
-		expect(result.current.volumeOptions).toEqual([100, 250, 500, 1000]);
+		expect(result.current.volumeOptions).toEqual([100, 300, 500, 1000]);
 	});
 
 	it("setSelectedVolume bekerja dengan benar", async () => {
 		const { result } = renderHook(() => useMemberKiosk());
 
 		await act(async () => {
-			result.current.setSelectedVolume(250);
+			result.current.setSelectedVolume(300);
 		});
 
-		expect(result.current.selectedVolume).toBe(250);
+		expect(result.current.selectedVolume).toBe(300);
 	});
 
 	it("guardReason menampilkan 'Dispenser offline'", () => {
@@ -230,14 +230,14 @@ describe("useMemberKiosk", () => {
 		const { result, unmount } = renderHook(() => useMemberKiosk());
 
 		await act(async () => {
-			result.current.setSelectedVolume(250);
+			result.current.setSelectedVolume(300);
 		});
 
 		await act(async () => {
 			await result.current.startDispensing();
 		});
 
-		expect(sendDispenseCommand).toHaveBeenCalledWith(250);
+		expect(sendDispenseCommand).toHaveBeenCalledWith(300);
 
 		unmount();
 	});
@@ -246,7 +246,7 @@ describe("useMemberKiosk", () => {
 		const { result, unmount } = renderHook(() => useMemberKiosk());
 
 		await act(async () => {
-			result.current.setSelectedVolume(250);
+			result.current.setSelectedVolume(300);
 		});
 
 		await act(async () => {
@@ -256,7 +256,7 @@ describe("useMemberKiosk", () => {
 		expect(setKioskProgress).toHaveBeenCalledWith(
 			expect.objectContaining({
 				isDispensing: true,
-				targetVolume: 250,
+				targetVolume: 300,
 				filledVolume: 0,
 				status: "filling",
 			}),

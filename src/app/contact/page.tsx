@@ -1,4 +1,6 @@
 import React from "react";
+import NavbarPublic from "@/components/layouts/navbar/navbar-public";
+import Footer from "@/components/layouts/footer";
 import ContactHero from "@/features/contacts/components/ContactHero";
 import ContactCard from "@/features/contacts/components/ContactCard";
 import OperationalHours from "@/features/contacts/components/OperationalHours";
@@ -15,23 +17,27 @@ export default function ContactPage() {
   ];
 
   return (
-    <main className="py-12">
-      <div className="max-w-6xl mx-auto px-6 space-y-8">
-        <ContactHero />
+    <div className="min-h-screen bg-[#f3f3f3] flex flex-col">
+      <NavbarPublic />
+      <main className="flex-1 py-12">
+        <div className="max-w-6xl mx-auto px-6 space-y-8">
+          <ContactHero />
 
-        <section>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {items.map((it) => (
-              <ContactCard key={it.key} title={it.title} value={it.value} description={it.description} icon={it.icon} iconClass={it.iconClass} />
-            ))}
+          <section>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {items.map((it) => (
+                <ContactCard key={it.key} title={it.title} value={it.value} description={it.description} icon={it.icon} iconClass={it.iconClass} />
+              ))}
+            </div>
+          </section>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <OperationalHours />
+            <ContactCTA />
           </div>
-        </section>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <OperationalHours />
-          <ContactCTA />
         </div>
-      </div>
-    </main>
+      </main>
+      <Footer />
+    </div>
   );
 }
