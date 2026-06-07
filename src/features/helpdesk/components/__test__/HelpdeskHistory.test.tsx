@@ -39,7 +39,7 @@ describe("HelpdeskHistory Component", () => {
     });
     render(<HelpdeskHistory />);
     expect(
-      screen.getByText(/Belum ada laporan yang diajukan./i),
+      screen.getByText(/Belum ada laporan/i),
     ).toBeInTheDocument();
   });
 
