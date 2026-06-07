@@ -31,4 +31,12 @@ describe('TdsCard', () => {
     expect(screen.getByText('800')).toBeInTheDocument();
     expect(screen.getByText('Kualitas air: Buruk')).toBeInTheDocument();
   });
+
+  it('rounds decimal TDS values to the nearest integer', () => {
+    render(<TdsCard tds={123.4} />);
+    expect(screen.getByText('123')).toBeInTheDocument();
+
+    render(<TdsCard tds={123.6} />);
+    expect(screen.getByText('124')).toBeInTheDocument();
+  });
 });

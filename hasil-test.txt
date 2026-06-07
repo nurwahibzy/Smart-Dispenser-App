@@ -1,0 +1,139 @@
+﻿node.exe : PASS src/features/profile/hooks/__tests__/useEditNama.test.ts
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (PASS src/featur...ditNama.test.ts:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+PASS src/features/contacts/components/__test__/ContactCTA.test.tsx
+PASS src/features/contacts/components/__test__/ContactHero.test.tsx
+PASS src/features/profile/components/__tests__/ModalGantiPassword.test.tsx
+PASS src/features/profile/hooks/__tests__/useProfile.test.ts
+PASS src/features/water/components/__tests__/water-level-section.test.tsx
+PASS src/features/profile/components/__tests__/ProfileCard.test.tsx
+PASS src/features/water/components/__tests__/valve-control-card.test.tsx
+PASS src/features/profile/components/__tests__/ModalEdit.test.tsx
+  ΓùÅ Console
+
+    console.error
+      Error: gagal
+          at Object.<anonymous> 
+(D:\Proyek\Next.js\smart-dispenser-app\src\features\profile\components\__tests__\ModalEdit.test.tsx:134:36)
+          at Promise.finally.completed 
+(D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-circus\build\jestAdapterInit.js:1561:28)
+          at new Promise (<anonymous>)
+          at callAsyncCircusFn 
+(D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-circus\build\jestAdapterInit.js:1501:10)
+          at _callCircusTest 
+(D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-circus\build\jestAdapterInit.js:1011:40)
+          at _runTest (D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-circus\build\jestAdapterInit.js:951:3)
+          at D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-circus\build\jestAdapterInit.js:853:7
+          at _runTestsForDescribeBlock 
+(D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-circus\build\jestAdapterInit.js:866:11)
+          at _runTestsForDescribeBlock 
+(D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-circus\build\jestAdapterInit.js:861:11)
+          at run (D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-circus\build\jestAdapterInit.js:765:3)
+          at runAndTransformResultsToJestFormat 
+(D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-circus\build\jestAdapterInit.js:1993:21)
+          at jestAdapter (D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-circus\build\runner.js:111:19)
+          at runTestInternal (D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-runner\build\testWorker.js:278:16)
+          at runTest (D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-runner\build\testWorker.js:346:7)
+          at Object.worker (D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-runner\build\testWorker.js:500:12)
+
+    [0m [90m 44 |[39m     } [36mcatch[39m (err) {
+     [90m 45 |[39m       setError([32m"Gagal menyimpan perubahan. Coba lagi."[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 46 |[39m       console[33m.[39merror(err)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 47 |[39m     } [36mfinally[39m {
+     [90m 48 |[39m       setLoading([36mfalse[39m)[33m;[39m
+     [90m 49 |[39m     }[0m
+
+      at error (src/features/profile/components/ModalEdit.tsx:46:15)
+
+PASS src/features/member/hooks/__test__/useMemberKiosk.test.tsx
+PASS src/features/auth/components/__tests__/LoginForm.test.tsx
+PASS src/features/water/components/__tests__/volume-control-card.test.tsx
+PASS src/features/helpdesk/components/__test__/HelpdeskForm.test.tsx
+  ΓùÅ Console
+
+    console.error
+      Error: Not implemented: navigation (except hash changes)
+          at reload (D:\Proyek\Next.js\smart-dispenser-app\src\features\helpdesk\components\HelpdeskForm.tsx:36:29) {
+        type: 'not implemented'
+      }
+
+    [0m [90m 34 |[39m                 description[33m:[39m [32m''[39m[33m,[39m
+     [90m 35 |[39m             })[33m;[39m
+    [31m[1m>[22m[39m[90m 36 |[39m             window[33m.[39mlocation[33m.[39mreload()[33m;[39m
+     [90m    |[39m                             [31m[1m^[22m[39m
+     [90m 37 |[39m         }
+     [90m 38 |[39m     }[33m;[39m
+     [90m 39 |[39m[0m
+
+      at VirtualConsole.<anonymous> (node_modules/@jest/environment-jsdom-abstract/build/index.js:87:23)
+      at module.exports (node_modules/jsdom/lib/jsdom/browser/not-implemented.js:12:26)
+      at navigateFetch (node_modules/jsdom/lib/jsdom/living/window/navigation.js:77:3)
+      at exports.navigate (node_modules/jsdom/lib/jsdom/living/window/navigation.js:55:3)
+      at LocationImpl.reload (node_modules/jsdom/lib/jsdom/living/window/Location-impl.js:225:5)
+      at Location.reload (node_modules/jsdom/lib/jsdom/living/generated/Location.js:102:36)
+      at reload (src/features/helpdesk/components/HelpdeskForm.tsx:36:29)
+
+PASS src/features/profile/hooks/__tests__/useEditEmail.test.ts
+PASS src/features/helpdesk/hooks/__test__/useGetHelpdesk.test.ts
+PASS src/features/water/components/__tests__/tds-card.test.tsx
+PASS src/features/profile/hooks/__tests__/useGantiPassword.test.ts
+PASS src/features/contacts/components/__test__/OperationalHours.test.tsx
+PASS src/features/auth/hooks/__tests__/useLogin.test.ts
+PASS src/features/contacts/hooks/__test__/useContacts.test.tsx
+PASS src/features/profile/hooks/__tests__/useEditFoto.test.ts
+  ΓùÅ Console
+
+    console.error
+      Error: gagal
+          at Object.<anonymous> 
+(D:\Proyek\Next.js\smart-dispenser-app\src\features\profile\hooks\__tests__\useEditFoto.test.ts:48:56)
+          at Promise.finally.completed 
+(D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-circus\build\jestAdapterInit.js:1561:28)
+          at new Promise (<anonymous>)
+          at callAsyncCircusFn 
+(D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-circus\build\jestAdapterInit.js:1501:10)
+          at _callCircusTest 
+(D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-circus\build\jestAdapterInit.js:1011:40)
+          at _runTest (D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-circus\build\jestAdapterInit.js:951:3)
+          at D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-circus\build\jestAdapterInit.js:853:7
+          at _runTestsForDescribeBlock 
+(D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-circus\build\jestAdapterInit.js:866:11)
+          at _runTestsForDescribeBlock 
+(D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-circus\build\jestAdapterInit.js:861:11)
+          at run (D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-circus\build\jestAdapterInit.js:765:3)
+          at runAndTransformResultsToJestFormat 
+(D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-circus\build\jestAdapterInit.js:1993:21)
+          at jestAdapter (D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-circus\build\runner.js:111:19)
+          at runTestInternal (D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-runner\build\testWorker.js:278:16)
+          at runTest (D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-runner\build\testWorker.js:346:7)
+          at Object.worker (D:\Proyek\Next.js\smart-dispenser-app\node_modules\jest-runner\build\testWorker.js:500:12)
+
+    [0m [90m 24 |[39m       [36mreturn[39m photoURL[33m;[39m
+     [90m 25 |[39m     } [36mcatch[39m (err) {
+    [31m[1m>[22m[39m[90m 26 |[39m       console[33m.[39merror(err)[33m;[39m
+     [90m    |[39m               [31m[1m^[22m[39m
+     [90m 27 |[39m       setError([32m"Gagal upload foto"[39m)[33m;[39m
+     [90m 28 |[39m       [36mreturn[39m [36mnull[39m[33m;[39m
+     [90m 29 |[39m     } [36mfinally[39m {[0m
+
+      at Object.error [as editFoto] (src/features/profile/hooks/useEditFoto.ts:26:15)
+      at src/features/profile/hooks/__tests__/useEditFoto.test.ts:53:7
+
+PASS src/features/water/components/__tests__/daily-usage-card.test.tsx
+PASS src/app/admin/dashboard/__tests__/page.test.tsx
+PASS src/components/charts/__tests__/trend-chart.test.tsx (5.027 s)
+PASS src/features/member/components/__test__/MemberKioskContent.test.tsx (5.06 s)
+PASS src/features/transaction/components/__tests__/consumption-trends-chart.test.tsx
+PASS src/features/contacts/components/__test__/ContactCard.test.tsx
+PASS src/features/transaction/components/__tests__/history-table.test.tsx
+
+Test Suites: 28 passed, 28 total
+Tests:       122 passed, 122 total
+Snapshots:   0 total
+Time:        9.386 s
+Ran all test suites.
