@@ -7,6 +7,16 @@ jest.mock("../../hooks/useSubmitHelpdesk", () => ({
   useSubmitTicket: jest.fn(),
 }));
 
+jest.mock("@/components/ui/select", () => ({
+  Select: ({ value, onChange, options }: any) => (
+    <select role="combobox" value={value} onChange={(e) => onChange(e.target.value)}>
+      {options.map((opt: any) => (
+        <option key={opt.value} value={opt.value}>{opt.label}</option>
+      ))}
+    </select>
+  ),
+}));
+
 describe("UserHelpdeskForm Component", () => {
   // Mock fungsi submitTicket yang dikembalikan oleh hook
   const mockSubmitTicket = jest.fn();

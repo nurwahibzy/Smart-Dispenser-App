@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import NavbarPublic from "@/components/layouts/navbar/navbar-public";
 import Footer from "@/components/layouts/footer";
 import DevModal from "@/features/about/components/developer-modal";
 import TeamSection from "@/features/about/components/team-section";
@@ -18,32 +19,34 @@ export default function AboutPage() {
   const [activeDev, setActiveDev] = useState<Developer | null>(null);
 
   return (
-    <main className="min-h-screen bg-white overflow-x-hidden">
-      <HeroSection />
-      <FeaturesSection />
-      <TechStackSection />
-      <StatsSection />
-      <TeamSection developers={developers} onOpenDev={setActiveDev} />
-      <CtaSection />
+    <div className="min-h-screen bg-white flex flex-col">
+      <NavbarPublic />
+      <main className="flex-1 bg-white overflow-x-hidden">
+        <HeroSection />
+        <FeaturesSection />
+        <TechStackSection />
+        <StatsSection />
+        <TeamSection developers={developers} onOpenDev={setActiveDev} />
+        <CtaSection />
 
-      {activeDev && (
-        <DevModal dev={activeDev} onClose={() => setActiveDev(null)} />
-      )}
+        {activeDev && (
+          <DevModal dev={activeDev} onClose={() => setActiveDev(null)} />
+        )}
 
-      <style jsx global>{`
-        @keyframes slideUp {
-          from {
-            opacity: 0;
-            transform: translateY(24px) scale(0.97);
+        <style jsx global>{`
+          @keyframes slideUp {
+            from {
+              opacity: 0;
+              transform: translateY(24px) scale(0.97);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0) scale(1);
+            }
           }
-          to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
-        }
-      `}</style>
-
+        `}</style>
+      </main>
       <Footer />
-    </main>
+    </div>
   );
 }

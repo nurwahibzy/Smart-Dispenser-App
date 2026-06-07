@@ -57,10 +57,10 @@ function TrendChartInner({ data }: TrendChartProps) {
       {/* Header */}
       <div className="mb-5">
         <h2 className="text-slate-800 font-semibold text-lg">
-          Consumption Trend
+          Tren Konsumsi
         </h2>
         <p className="text-slate-400 text-sm mt-1">
-          Avg {avgPerDay.toFixed(1)}L/day · {totalWeek.toFixed(1)}L this week
+          Rata-rata {avgPerDay.toFixed(1)}L/hari · {totalWeek.toFixed(1)}L minggu ini
         </p>
       </div>
 
@@ -106,6 +106,7 @@ function TrendChartInner({ data }: TrendChartProps) {
             <Area
               type="monotone"
               dataKey="liters"
+              name="Konsumsi (L)"
               stroke="#3b82f6"
               strokeWidth={3}
               fill="url(#colorLiters)"

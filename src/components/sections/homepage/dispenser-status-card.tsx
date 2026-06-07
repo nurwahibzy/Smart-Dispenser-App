@@ -52,7 +52,7 @@ export default function DispenserStatusCard() {
     },
     {
       label: "TDS",
-      value: String(status.tds),
+      value: String(Math.round(status.tds)),
       icon: Gauge,
       iconClass: "text-cyan-600",
       iconBg: "bg-cyan-50",
