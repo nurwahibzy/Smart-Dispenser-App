@@ -48,6 +48,11 @@ jest.mock("@/features/water/components/glass-detection-card", () => ({
 	),
 }));
 
+jest.mock("@/features/water/components/valve-control-card", () => ({
+	__esModule: true,
+	default: () => <div>Status Katup</div>,
+}));
+
 jest.mock("lucide-react", () => ({
 	Droplets: () => <svg data-testid="droplets-icon" />,
 }));
@@ -60,7 +65,7 @@ const baseDeviceData = {
 };
 
 const baseHookReturn = {
-	volumeOptions: [100, 250, 500, 1000],
+	volumeOptions: [100, 300, 500, 1000],
 	selectedVolume: null,
 	setSelectedVolume: mockSetSelectedVolume,
 	startDispensing: mockStartDispensing,
@@ -106,7 +111,7 @@ describe("MemberKioskContent", () => {
 
 		render(<MemberKioskContent />);
 
-		expect(screen.getByText("Memuat data status...")).toBeInTheDocument();
+		expect(screen.getByText("Memuat data status…")).toBeInTheDocument();
 	});
 
 	it("menampilkan water level", () => {
@@ -125,7 +130,7 @@ describe("MemberKioskContent", () => {
 		render(<MemberKioskContent />);
 
 		expect(screen.getByRole("button", { name: "100 ml" })).toBeInTheDocument();
-		expect(screen.getByRole("button", { name: "250 ml" })).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "300 ml" })).toBeInTheDocument();
 		expect(screen.getByRole("button", { name: "500 ml" })).toBeInTheDocument();
 		expect(screen.getByRole("button", { name: "1000 ml" })).toBeInTheDocument();
 	});
@@ -176,13 +181,13 @@ describe("MemberKioskContent", () => {
 		(useMemberKiosk as jest.Mock).mockReturnValueOnce({
 			...baseHookReturn,
 			isDispensing: true,
-			progressText: "Mengisi... 100ml / 250ml",
+			progressText: "Mengisi... 100ml / 300ml",
 		});
 
 		render(<MemberKioskContent />);
 
 		expect(
-			screen.getByText("Mengisi... 100ml / 250ml"),
+			screen.getByText("Mengisi... 100ml / 300ml"),
 		).toBeInTheDocument();
 	});
 
@@ -200,7 +205,7 @@ describe("MemberKioskContent", () => {
 			jest.runOnlyPendingTimers();
 		});
 
-		expect(screen.getByText("Selesai!")).toBeInTheDocument();
+		expect(screen.getByText("✓ Selesai!")).toBeInTheDocument();
 		expect(screen.getByText("Berhasil!")).toBeInTheDocument();
 
 		jest.useRealTimers();

@@ -96,7 +96,7 @@ export const useMemberKiosk = () => {
         const requestedVol = selectedVolume;
 
         intervalRef.current = setInterval(async () => {
-            localFilled = Math.min(localFilled + 25, requestedVol);
+            localFilled = Math.min(localFilled + 1, requestedVol); // increment per tick (ml)
 
             const isCompleted = localFilled >= requestedVol;
 
@@ -134,7 +134,7 @@ export const useMemberKiosk = () => {
                     resetToInitial();
                 }, 4000);
             }
-        }, 300);
+        }, 630); // interval per tick (ms)
     };
 
     const progressPercent = targetVolume ? Math.min(100, Math.round((filledVolume / targetVolume) * 100)) : 0;
