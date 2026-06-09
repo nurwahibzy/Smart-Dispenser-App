@@ -181,7 +181,7 @@ export const useMemberKiosk = () => {
                     resetToInitial();
                 }, 4000);
             }
-        }, 630); // interval per tick (ms)
+        }, 40); // interval per tick (ms)
     };
 
     const progressPercent = targetVolume ? Math.min(100, Math.round((filledVolume / targetVolume) * 100)) : 0;
