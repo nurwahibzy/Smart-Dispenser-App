@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Droplets } from 'lucide-react';
+import { Droplets, Settings } from 'lucide-react';
 import { useMemberKiosk } from '@/features/member/hooks/useMemberKiosk';
 import WaterLevelSection from '@/features/water/components/water-level-section';
 import TdsCard from '@/features/water/components/tds-card';
@@ -27,6 +27,8 @@ export default function MemberKioskContent() {
         volumeOptions,
         selectedVolume,
         setSelectedVolume,
+        customVolume,
+        setCustomVolume,
         startDispensing,
         canStart,
         isDispensing,
@@ -162,7 +164,7 @@ export default function MemberKioskContent() {
                         />
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                         {volumeOptions.map((volume) => {
                             const isSelected = selectedVolume === volume;
                             return (
@@ -202,6 +204,61 @@ export default function MemberKioskContent() {
                                 </button>
                             );
                         })}
+                        {/* OPSI CUSTOM VOLUME */}
+                        {(() => {
+                            const isCustomSelected = selectedVolume === 'custom';
+                            return (
+                                <div
+                                    className="vol-btn rounded-2xl border p-4 flex flex-col justify-between focus-within:ring-2 focus-within:ring-blue-300 transition-all select-none cursor-pointer"
+                                    data-selected={isCustomSelected ? 'true' : undefined}
+                                    onClick={() => {
+                                        if (selectedVolume !== 'custom') {
+                                            setSelectedVolume('custom');
+                                        }
+                                    }}
+                                    style={{
+                                        background: isCustomSelected
+                                            ? 'linear-gradient(135deg,rgba(219,234,254,.9),rgba(207,250,254,.9))'
+                                            : 'rgba(255,255,255,0.55)',
+                                        borderColor: isCustomSelected ? '#3b82f6' : 'rgba(147,197,253,0.5)',
+                                        boxShadow: isCustomSelected
+                                            ? '0 0 0 3px rgba(59,130,246,.18), 0 6px 20px rgba(14,165,233,.18)'
+                                            : '0 2px 8px rgba(14,165,233,.06)',
+                                    }}
+                                >
+                                    <div
+                                        className="h-14 rounded-xl flex items-center justify-center transition-all"
+                                        style={{
+                                            background: isCustomSelected
+                                                ? 'linear-gradient(135deg, #3b82f6, #0ea5e9)'
+                                                : 'linear-gradient(135deg, rgba(219,234,254,.8), rgba(207,250,254,.6))',
+                                        }}
+                                    >
+                                        <Settings size={22} style={{ color: isCustomSelected ? '#fff' : '#3b82f6' }} />
+                                    </div>
+
+                                    <div className="mt-3 flex items-center justify-center gap-1">
+                                        {isCustomSelected ? (
+                                            <div className="flex items-end justify-center gap-0.5 w-full" onClick={(e) => e.stopPropagation()}>
+                                                <input
+                                                    type="number"
+                                                    placeholder="0"
+                                                    value={customVolume}
+                                                    onChange={(e) => setCustomVolume(e.target.value)}
+                                                    className="w-full text-center text-xl font-black bg-transparent border-b-2 border-blue-500 focus:outline-none text-blue-900 p-0 m-0 [-moz-appearance:_textfield] [&::-webkit-outer-spin-button]:margin-0 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:margin-0 [&::-webkit-inner-spin-button]:appearance-none"
+                                                    autoFocus
+                                                />
+                                                <span className="text-xs font-semibold text-blue-800 opacity-75 mb-0.5">ml</span>
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-end justify-center gap-1 text-blue-600 h-[29px] items-center">
+                                                <span className="text-sm font-bold opacity-80">Custom</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })()}
                     </div>
                 </section>
 
