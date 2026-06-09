@@ -6,6 +6,7 @@ import { useTransactionData } from "@/lib/hooks/useTransactionData";
 import { calculateDailyUsage } from "@/lib/utils/transaction";
 
 const mockSetSelectedVolume = jest.fn();
+const mockSetCustomVolume = jest.fn();
 const mockStartDispensing = jest.fn();
 
 jest.mock("@/features/member/hooks/useMemberKiosk", () => ({
@@ -55,6 +56,7 @@ jest.mock("@/features/water/components/valve-control-card", () => ({
 
 jest.mock("lucide-react", () => ({
 	Droplets: () => <svg data-testid="droplets-icon" />,
+	Settings: () => <svg data-testid="settings-icon" />,
 }));
 
 const baseDeviceData = {
@@ -68,6 +70,8 @@ const baseHookReturn = {
 	volumeOptions: [100, 300, 500, 1000],
 	selectedVolume: null,
 	setSelectedVolume: mockSetSelectedVolume,
+	customVolume: null,
+	setCustomVolume: mockSetCustomVolume,
 	startDispensing: mockStartDispensing,
 	canStart: false,
 	isDispensing: false,
@@ -210,4 +214,35 @@ describe("MemberKioskContent", () => {
 
 		jest.useRealTimers();
 	});
+
+	it("menampilkan opsi Custom volume", () => {
+        render(<MemberKioskContent />);
+        expect(screen.getByText("Custom")).toBeInTheDocument();
+    });
+
+    it("menampilkan input angka ketika opsi Custom dipilih", () => {
+        (useMemberKiosk as jest.Mock).mockReturnValueOnce({
+            ...baseHookReturn,
+            selectedVolume: "custom",
+        });
+
+        render(<MemberKioskContent />);
+        
+        expect(screen.getByPlaceholderText("0")).toBeInTheDocument();
+    });
+
+    it("memanggil setCustomVolume saat angka diketik di input Custom", () => {
+        (useMemberKiosk as jest.Mock).mockReturnValueOnce({
+            ...baseHookReturn,
+            selectedVolume: "custom",
+        });
+
+        render(<MemberKioskContent />);
+        
+        const inputField = screen.getByPlaceholderText("0");
+        
+        fireEvent.change(inputField, { target: { value: "450" } });
+        
+        expect(mockSetCustomVolume).toHaveBeenCalledWith("450");
+    });
 });
