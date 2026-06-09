@@ -14,7 +14,7 @@ import type { DeviceData } from '@/types/device';
 
 const VOLUME_OPTIONS = [100, 300, 500, 1000] as const;
 
-type FinishState = 'idle' | 'done';
+type FinishState = 'idle' | 'done' | 'gelas tidak terdeteksi';
 type SelectedVolumeType = number | 'custom' | null;
 
 const getWaterQuality = (tds: number) => {
@@ -35,11 +35,13 @@ export const useMemberKiosk = () => {
 
     // Simpan TDS terkini di ref agar selalu bisa dibaca dari dalam interval callback
     const tdsRef = useRef<number>(0);
+    const glassDetectedRef = useRef<boolean>(false);
 
     useEffect(() => {
         const unsubDevice = subscribeDeviceStatus((data) => {
             setDevice(data);
             tdsRef.current = Number(data?.sensors?.tds || 0);
+            glassDetectedRef.current = !!data?.sensors?.glassDetected;
         });
         const unsubKiosk = subscribeKioskProgress((data) => setKiosk(data));
 
@@ -84,7 +86,7 @@ export const useMemberKiosk = () => {
     };
 
     const startDispensing = async () => {
-        if (!selectedVolume || !canStart) return;
+        if (!selectedVolume || !canStart|| !glassDetected) return;
 
         setFinishState('idle');
 
@@ -103,6 +105,44 @@ export const useMemberKiosk = () => {
         const requestedVol = actualVolume;
 
         intervalRef.current = setInterval(async () => {
+
+            if (!glassDetectedRef.current) {
+                // 1. Matikan Interval
+                if (intervalRef.current) {
+                    clearInterval(intervalRef.current);
+                    intervalRef.current = null;
+                }
+
+                // 3. Update database: batalkan pengisian
+                await setKioskProgress({
+                    isDispensing: false,
+                    targetVolume: requestedVol,
+                    filledVolume: localFilled,
+                    status: 'error', // Status dibatalkan
+                    updatedAt: Date.now(),
+                });
+
+                try {
+                    await addTransaction({
+                        actualVolume: localFilled,
+                        requestedVolume: requestedVol,
+                        type: selectedVolume === 'custom' ? 'manual' : 'auto',
+                        tds: tdsRef.current,
+                    });
+                } catch (err) {
+                    console.error('Gagal mencatat transaksi terputus:', err);
+                }
+
+                setFinishState('gelas tidak terdeteksi');
+
+                if (finishRef.current) clearTimeout(finishRef.current);
+                finishRef.current = setTimeout(() => {
+                    resetToInitial();
+                }, 4000);
+
+                return;
+            }
+            
             localFilled = Math.min(localFilled + 1, requestedVol); // increment per tick (ml)
 
             const isCompleted = localFilled >= requestedVol;

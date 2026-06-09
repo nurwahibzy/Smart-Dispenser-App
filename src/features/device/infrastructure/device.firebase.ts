@@ -6,7 +6,7 @@ export type KioskProgress = {
   isDispensing: boolean;
   targetVolume: number;
   filledVolume: number;
-  status: "idle" | "filling" | "completed";
+  status: "idle" | "filling" | "completed" | "error";
   updatedAt: number;
 };
 
