@@ -14,7 +14,8 @@ import type { DeviceData } from '@/types/device';
 
 const VOLUME_OPTIONS = [100, 300, 500, 1000] as const;
 
-type FinishState = 'idle' | 'done';
+type FinishState = 'idle' | 'done' | 'gelas tidak terdeteksi';
+type SelectedVolumeType = number | 'custom' | null;
 
 const getWaterQuality = (tds: number) => {
     if (tds <= 150) return 'Baik';
@@ -24,7 +25,8 @@ const getWaterQuality = (tds: number) => {
 
 export const useMemberKiosk = () => {
     const [device, setDevice] = useState<DeviceData | null>(null);
-    const [selectedVolume, setSelectedVolume] = useState<number | null>(null);
+    const [selectedVolume, setSelectedVolume] = useState<SelectedVolumeType>(null);
+    const [customVolume, setCustomVolume] = useState<string>('');
     const [kiosk, setKiosk] = useState<KioskProgress | null>(null);
     const [finishState, setFinishState] = useState<FinishState>('idle');
 
@@ -33,11 +35,13 @@ export const useMemberKiosk = () => {
 
     // Simpan TDS terkini di ref agar selalu bisa dibaca dari dalam interval callback
     const tdsRef = useRef<number>(0);
+    const glassDetectedRef = useRef<boolean>(false);
 
     useEffect(() => {
         const unsubDevice = subscribeDeviceStatus((data) => {
             setDevice(data);
             tdsRef.current = Number(data?.sensors?.tds || 0);
+            glassDetectedRef.current = !!data?.sensors?.glassDetected;
         });
         const unsubKiosk = subscribeKioskProgress((data) => setKiosk(data));
 
@@ -57,17 +61,22 @@ export const useMemberKiosk = () => {
     const waterQuality = getWaterQuality(tds);
 
     const isDispensing = kiosk?.isDispensing || false;
-    const targetVolume = selectedVolume || 0;
-    const filledVolume = selectedVolume ? kiosk?.filledVolume || 0 : 0;
+
+    const actualVolume = selectedVolume === 'custom' 
+        ? (parseInt(customVolume, 10) || 0) 
+        : (selectedVolume || 0);
+
+    const targetVolume = actualVolume;
+    const filledVolume = actualVolume ? kiosk?.filledVolume || 0 : 0;
 
     const canStart = useMemo(() => {
-        if (!selectedVolume) return false;
+        if (actualVolume <= 0) return false;
         if (!isOnline) return false;
         if (!glassDetected) return false;
         if (waterLevel <= 0) return false;
         if (isDispensing) return false;
         return true;
-    }, [selectedVolume, isOnline, glassDetected, waterLevel, isDispensing]);
+    }, [actualVolume, isOnline, glassDetected, waterLevel, isDispensing]);
 
     const resetToInitial = async () => {
         await resetKioskProgress();
@@ -77,14 +86,14 @@ export const useMemberKiosk = () => {
     };
 
     const startDispensing = async () => {
-        if (!selectedVolume || !canStart) return;
+        if (!selectedVolume || !canStart|| !glassDetected) return;
 
         setFinishState('idle');
 
-        await sendDispenseCommand(selectedVolume);
+        await sendDispenseCommand(actualVolume);
         await setKioskProgress({
             isDispensing: true,
-            targetVolume: selectedVolume,
+            targetVolume: actualVolume,
             filledVolume: 0,
             status: 'filling',
             updatedAt: Date.now(),
@@ -93,9 +102,47 @@ export const useMemberKiosk = () => {
         if (intervalRef.current) clearInterval(intervalRef.current);
         let localFilled = 0;
         // Simpan volume target secara lokal agar bisa diakses di dalam closure interval
-        const requestedVol = selectedVolume;
+        const requestedVol = actualVolume;
 
         intervalRef.current = setInterval(async () => {
+
+            if (!glassDetectedRef.current) {
+                // 1. Matikan Interval
+                if (intervalRef.current) {
+                    clearInterval(intervalRef.current);
+                    intervalRef.current = null;
+                }
+
+                // 3. Update database: batalkan pengisian
+                await setKioskProgress({
+                    isDispensing: false,
+                    targetVolume: requestedVol,
+                    filledVolume: localFilled,
+                    status: 'error', // Status dibatalkan
+                    updatedAt: Date.now(),
+                });
+
+                try {
+                    await addTransaction({
+                        actualVolume: localFilled,
+                        requestedVolume: requestedVol,
+                        type: selectedVolume === 'custom' ? 'manual' : 'auto',
+                        tds: tdsRef.current,
+                    });
+                } catch (err) {
+                    console.error('Gagal mencatat transaksi terputus:', err);
+                }
+
+                setFinishState('gelas tidak terdeteksi');
+
+                if (finishRef.current) clearTimeout(finishRef.current);
+                finishRef.current = setTimeout(() => {
+                    resetToInitial();
+                }, 4000);
+
+                return;
+            }
+            
             localFilled = Math.min(localFilled + 1, requestedVol); // increment per tick (ml)
 
             const isCompleted = localFilled >= requestedVol;
@@ -145,6 +192,8 @@ export const useMemberKiosk = () => {
         volumeOptions: VOLUME_OPTIONS,
         selectedVolume,
         setSelectedVolume,
+        customVolume,     
+        setCustomVolume,  // Diekspor agar bisa menerima ketikan user
         startDispensing,
         canStart,
         isDispensing,
@@ -163,7 +212,9 @@ export const useMemberKiosk = () => {
               : !glassDetected
                 ? 'Gelas tidak terdeteksi'
                 : !selectedVolume
-                  ? 'Pilih volume dulu'
-                  : '',
+                  ? 'Pilih volume terlebih dahulu'
+                  : selectedVolume === 'custom' && (parseInt(customVolume, 10) || 0) <= 0
+                    ? 'Volume harus lebih dari 0 ml'
+                    : ''
     };
 };
